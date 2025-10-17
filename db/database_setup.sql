@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS opatejdl_user (
     UNIQUE KEY uq_user_email (email),
     KEY idx_user_role (fk_id_role),
     KEY idx_user_created_at (created_at)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;
 
 ---------------------------------------------------------------------
 -- 3. PRODUCT CATEGORY
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS opatejdl_product (
     KEY idx_product_category (fk_id_category),
     KEY idx_product_created_at (created_at),
     CHECK chk_product_price CHECK (price >= 0)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;
 
 ---------------------------------------------------------------------
 -- 5. Review
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS opatejdl_review (
     KEY idx_review_product (fk_id_product),
     KEY idx_review_product_created_at (fk_id_product, created_at),
     CHECK chk_review_rating CHECK (rating BETWEEN 1 AND 5)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;
 
 ---------------------------------------------------------------------
 -- FK Constraints
@@ -133,13 +133,13 @@ INSERT INTO opatejdl_user (id_user, fk_id_role, username, email, password) VALUE
  (10, 4, 'karel',       'karel@example.com',       '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
  (11, 3, 'iva',         'iva@example.com',         '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
  (12, 2, 'admin',       'admin@example.com',       '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
- (13, 1, 'superadmin',  'superadmin@example.com',  '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+ (13, 1, 'opatejdl',  'opatejdl@students.zcu.cz',  '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
 
 INSERT INTO opatejdl_product (id_product, fk_id_category, name, price, photo_url) VALUES
- (1, 1, 'Česnečka',                95, '/img/cesnecka.jpg'),
- (2, 2, 'Svíčková na smetaně',    189, '/img/svickova.jpg'),
- (3, 3, 'Jablečný štrúdl',         79, '/img/strudl.jpg'),
- (4, 4, 'Domácí limonáda',         55, '/img/limonada.jpg');
+ (1, 1, 'Česnečka',                95, 'data/img/cesnecka.jpg'),
+ (2, 2, 'Svíčková na smetaně',    189, 'data/img/svickova.jpg'),
+ (3, 3, 'Jablečný štrúdl',         79, 'data/img/strudl.jpg'),
+ (4, 4, 'Domácí limonáda',         55, 'data/img/limonada.jpg');
 
 INSERT INTO opatejdl_review (id_review, fk_id_user, fk_id_product, rating, description) VALUES
  (1, 10, 1, 5, 'Výborná polévka, poctivý česnek.'),
