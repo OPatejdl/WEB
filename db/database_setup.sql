@@ -6,19 +6,21 @@ description: This file creates entities and their relations used throughout the 
 */
 SET time_zone = '+00:00';
 START TRANSACTION;
----------------------------------------------------------------------
+
+-- -------------------------------------------------------------------
 -- DROP TABLES
----------------------------------------------------------------------
+-- -------------------------------------------------------------------
 DROP TABLE IF EXISTS opatejdl_review;
 DROP TABLE IF EXISTS opatejdl_product;
 DROP TABLE IF EXISTS opatejdl_user;
 DROP TABLE IF EXISTS opatejdl_category;
 DROP TABLE IF EXISTS opatejdl_role;
 
----------------------------------------------------------------------
+-- -------------------------------------------------------------------
 -- CREATE TABLES
----------------------------------------------------------------------
---- 1. Role
+-- -------------------------------------------------------------------
+
+-- 1. Role
 CREATE TABLE IF NOT EXISTS opatejdl_role (
     id_role             INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name                VARCHAR(30) NOT NULL,
@@ -26,11 +28,10 @@ CREATE TABLE IF NOT EXISTS opatejdl_role (
     UNIQUE KEY uq_role_name (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;
 
----------------------------------------------------------------------
---- 2. User
+-- 2. User
 CREATE TABLE IF NOT EXISTS opatejdl_user (
     id_user             INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    fk_id_role          INT UNSIGNED NOT NULL DEFAULT 4,              
+    fk_id_role          INT UNSIGNED NOT NULL DEFAULT 4,
     username            VARCHAR(50) NOT NULL,
     email               VARCHAR(50) NOT NULL,
     password            VARCHAR(250) NOT NULL,
@@ -41,15 +42,13 @@ CREATE TABLE IF NOT EXISTS opatejdl_user (
     KEY idx_user_created_at (created_at)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;
 
----------------------------------------------------------------------
 -- 3. PRODUCT CATEGORY
-CREATE TABLE opatejdl_category (
+CREATE TABLE IF NOT EXISTS opatejdl_category (
   id_category           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name                  VARCHAR(60) NOT NULL,
   UNIQUE KEY uq_category_name (name)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;
 
----------------------------------------------------------------------
 -- 4. PRODUCT
 CREATE TABLE IF NOT EXISTS opatejdl_product (
     id_product          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -61,10 +60,9 @@ CREATE TABLE IF NOT EXISTS opatejdl_product (
     UNIQUE KEY uq_product_name (name),
     KEY idx_product_category (fk_id_category),
     KEY idx_product_created_at (created_at),
-    CHECK chk_product_price CHECK (price >= 0)
+    CONSTRAINT chk_product_price CHECK (price >= 0)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;
 
----------------------------------------------------------------------
 -- 5. Review
 CREATE TABLE IF NOT EXISTS opatejdl_review (
     id_review           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -77,12 +75,12 @@ CREATE TABLE IF NOT EXISTS opatejdl_review (
     KEY idx_review_user (fk_id_user),
     KEY idx_review_product (fk_id_product),
     KEY idx_review_product_created_at (fk_id_product, created_at),
-    CHECK chk_review_rating CHECK (rating BETWEEN 1 AND 5)
+    CONSTRAINT chk_review_rating CHECK (rating BETWEEN 1 AND 5)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;
 
----------------------------------------------------------------------
+-- -------------------------------------------------------------------
 -- FK Constraints
----------------------------------------------------------------------
+-- -------------------------------------------------------------------
 
 -- User and Role
 ALTER TABLE opatejdl_user
@@ -113,9 +111,9 @@ ALTER TABLE opatejdl_review
     ON UPDATE CASCADE
     ON DELETE CASCADE;
 
----------------------------------------------------------------------
+-- -------------------------------------------------------------------
 -- INSERT DATA
----------------------------------------------------------------------
+-- -------------------------------------------------------------------
 
 INSERT INTO opatejdl_role (id_role, name, priority) VALUES
  (1, 'Super Admin', 20),
@@ -133,7 +131,7 @@ INSERT INTO opatejdl_user (id_user, fk_id_role, username, email, password) VALUE
  (10, 4, 'karel',       'karel@example.com',       '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
  (11, 3, 'iva',         'iva@example.com',         '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
  (12, 2, 'admin',       'admin@example.com',       '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
- (13, 1, 'opatejdl',  'opatejdl@students.zcu.cz',  '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+ (13, 1, 'opatejdl',    'opatejdl@students.zcu.cz', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
 
 INSERT INTO opatejdl_product (id_product, fk_id_category, name, price, photo_url) VALUES
  (1, 1, 'Česnečka',                95, 'data/img/cesnecka.jpg'),
