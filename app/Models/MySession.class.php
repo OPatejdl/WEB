@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class for Session handling
+ *
+ * @author: Ondrej Patejdl
+ */
 class MySession
 {
     public function __construct() {
@@ -41,8 +46,9 @@ class MySession
     }
 
     /**
-     * @param $name
-     * @return void
+     * Function removes a session
+     *
+     * @param $name session's name
      */
     public function removeSession($name) {
         unset($_SESSION[$name]);
