@@ -34,6 +34,12 @@
                                 <span class="fw-bold fs-4 text-light mb-0">U Dvou Piváků</span>
                             </a>
 
+                            <!-- Toggle navigation in case of smaller view -->
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                                    aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+
                             <!-- Main navigation -->
                             <div class="collapse navbar-collapse order-lg-2 flex-grow-1" id="mainNav">
                                 <ul class="navbar-nav mx-auto my-3 my-lg-0">
@@ -80,6 +86,7 @@
                         <?php echo "Footer of all pages" ?>
                     </div>
                 </footer>
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
                 </body>
                 </html>
             <?php
