@@ -18,6 +18,8 @@ class Homepage implements IController
         global $tplData;
         $tplData = [];
         $tplData["title"] = $pageTitle;
+        $tplData["isLogged"] = false;
+
         ob_start();
         require(DIRECTORY_VIEW . "/HomepageTemplate.php");
 

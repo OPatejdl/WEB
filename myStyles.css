@@ -1,0 +1,9 @@
+.navbar .nav-link {
+    opacity: .9;
+    transition: opacity .2s ease, color .2s ease;
+}
+
+.navbar .nav-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
