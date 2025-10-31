@@ -20,7 +20,7 @@
                     <link rel="stylesheet" href="myStyles.css">
 
                 </head>
-                <body>
+                <body class="d-flex flex-column min-vh-100">
                 <header class="bg-dark text-white sticky-top">
                     <nav class="navbar navbar-expand-lg navbar-dark py-3">
                         <div class="container align-items-center">
@@ -45,7 +45,7 @@
                                 <ul class="navbar-nav mx-auto my-3 my-lg-0">
                                 <?php
                                     foreach(WEB_PAGES as $key => $page) {
-                                        if ($key != 'newReview' && $key != "newProduct" && $key != "register" && $key != "login") {
+                                        if (!in_array($key, ['newReview', "newProduct", "register", "login"])) {
                                             echo "<li class='nav-item'>
                                                     <a class='nav-link px-3 fw-semibold fs-5' href='index.php?page=$key'>$page[title]</a>
                                                     </li>";
@@ -68,20 +68,18 @@
                         </div>
                     </nav>
                 </header>
-                <main>
+                <main class="flex-grow-1">
                     <div class="container">
             <?php
         }
 
         /**
          * Function defines HTML Footer
-         * @return void
          */
-        public function getHTMLFooter() {
+        public function getHTMLFooter(): void {
             ?>
                     </div>
                 </main>
-                <br>
                 <footer class="bg-dark text-white border-top border-2 border-warning mt-auto">
                     <div class="container py-3">
                         <div class="row text-center text-md-start gy-4">
@@ -104,7 +102,7 @@
                                 </h5>
                                 <div class="ms-3">
                                     <p class="mb-1">U Dvou Piváků</p>
-                                    <p class="mb-1">Pivovarská 12, 301 00 Plzeň</p>
+                                    <p class="mb-1"> Pivovarská 12, 301 00 Plzeň</p>
                                     <p class="mb-1"> +420 123 456 789 </p>
                                     <p class="mb-0">
                                         <a href="mailto:opatejdl@students.zcu.cz" class="text-white text-decoration-none">opatejdl@students.zcu.cz</a>
