@@ -20,7 +20,7 @@
                     <link rel="stylesheet" href="myStyles.css">
 
                 </head>
-                <body>
+                <body class="d-flex flex-column min-vh-100">
                 <header class="bg-dark text-white sticky-top">
                     <nav class="navbar navbar-expand-lg navbar-dark py-3">
                         <div class="container align-items-center">
@@ -45,7 +45,7 @@
                                 <ul class="navbar-nav mx-auto my-3 my-lg-0">
                                 <?php
                                     foreach(WEB_PAGES as $key => $page) {
-                                        if ($key != 'newReview' && $key != "newProduct" && $key != "register" && $key != "login") {
+                                        if (!in_array($key, ['newReview', "newProduct", "register", "login"])) {
                                             echo "<li class='nav-item'>
                                                     <a class='nav-link px-3 fw-semibold fs-5' href='index.php?page=$key'>$page[title]</a>
                                                     </li>";
@@ -68,27 +68,86 @@
                         </div>
                     </nav>
                 </header>
-                <main>
+                <main class="flex-grow-1">
                     <div class="container">
             <?php
         }
 
         /**
          * Function defines HTML Footer
-         * @return void
          */
-        public function getHTMLFooter() {
+        public function getHTMLFooter(): void {
             ?>
                     </div>
                 </main>
-                <footer>
-                    <div class="container">
-                        <?php echo "Footer of all pages" ?>
+                <footer class="bg-dark text-white border-top border-2 border-warning mt-auto">
+                    <div class="container py-3">
+                        <div class="row text-center text-md-start gy-4">
+                            <!-- Opening time-->
+                            <div class="col-md-4">
+                                <h5 class="fw-bold text-warning mb-3">
+                                    Otevírací doba
+                                </h5>
+                                <ul class="list-unstyled mb-2 ms-4">
+                                    <li>Po–Čt: 14:00–23:00</li>
+                                    <li>Pá–So: 14:00–01:00</li>
+                                    <li>Ne: Zavřeno</li>
+                                </ul>
+                            </div>
+
+                            <!-- Contact Info -->
+                            <div class="col-md-4">
+                                <h5 class="fw-bold text-warning mb-3">
+                                    Adresa a kontakt
+                                </h5>
+                                <div class="ms-3">
+                                    <p class="mb-1">U Dvou Piváků</p>
+                                    <p class="mb-1"> Pivovarská 12, 301 00 Plzeň</p>
+                                    <p class="mb-1"> +420 123 456 789 </p>
+                                    <p class="mb-0">
+                                        <a href="mailto:opatejdl@students.zcu.cz" class="text-white text-decoration-none">opatejdl@students.zcu.cz</a>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Social Media -->
+                            <div class="col-md-4">
+                                <h5 class="fw-bold text-warning mb-2">
+                                    Sledujte nás
+                                </h5>
+                                <ul class="list-unstyled justify-content-center justify-content-md-start ms-2 mb-0">
+                                    <li>
+                                        <a href="https://github.com/OPatejdl/WEB" target="_blank" class="text-white text-decoration-none fs-6">
+                                            GitHub
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://facebook.com" target="_blank" class="text-white text-decoration-none fs-6">
+                                            Facebook
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://instagram.com" target="_blank" class="text-white text-decoration-none fs-6">
+                                            Instagram
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Copyright -->
+                        <div class="bg-gray  text-center py-3 mt-3 border-top border-warning">
+                            <small class="text-secondary">
+                                &copy; <?php echo date('Y'); ?> Ondřej Patejdl
+                            </small>
+                        </div>
                     </div>
                 </footer>
-                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+                <!--Bootstrap connect-->
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
                 </body>
-                </html>
+            </html>
             <?php
         }
     }

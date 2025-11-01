@@ -27,7 +27,8 @@ class MyDatabase
         $res = $this->pdo->query($q);
 
         if (!$res) {
-            echo $this->pdo->errorInfo()[2];
+            $error = $this->pdo->errorInfo()[2];
+            echo "<script> console.log('$error');</script>";
             return null;
         } else {
             return $res;
@@ -75,7 +76,7 @@ class MyDatabase
 
     ///////////////////////// Specific Functions /////////////////////////
     /**
-     * Functions gets all users from DB order by their username
+     * Function gets all users from DB order by their username
      *
      * @return array array of all users
      */
@@ -84,12 +85,64 @@ class MyDatabase
     }
 
     /**
-     * Functions gets all products from DB order by their name
+     * Function gets all products from DB order by their name
      *
      * @return array array of all products
      */
     public function getAllProducts(): array {
         return $this->selectFromTable(TABLE_PRODUCT, "","name");
+    }
+
+    /**
+     * Function gets all products categories from DB order by their name
+     *
+     * @return array array of all products
+     */
+    public function getAllProductsCategories(): array {
+        return $this->selectFromTable(TABLE_CATEGORY, "","id_category");
+    }
+
+    /**
+     * Function gets products of a category
+     *
+     * @param int $idCategory category's id
+     * @return array array of products with same category
+     */
+    private function getProductsOfCategory(int $idCategory): array {
+        return $this->selectFromTable(TABLE_PRODUCT, "fk_id_category = $idCategory");
+    }
+
+    // Get MENU functions
+
+    /**
+     * Function gets array of products with same category
+     *
+     * @param array $category - category type: [id_category, name]
+     * @return array array in the format [category_name, products]
+     */
+    private function getMenuOfCategory(array $category): array {
+        $subMenu = [];
+
+        $subMenu[0] = $category["name"];
+        $subMenu[1] = $this->getProductsOfCategory(($category["id_category"]));
+
+        return $subMenu;
+    }
+
+    /**
+     * Function gets
+     *
+     * @return array restaurant's menu
+     */
+    public function getMenu(): array {
+        $menu = [];
+        $category = $this->getAllProductsCategories();
+
+        for ($i = 0; $i < count($category); $i++) {
+            $menu[$i] = $this->getMenuOfCategory($category[$i]);
+        }
+
+        return $menu;
     }
 
     /**
