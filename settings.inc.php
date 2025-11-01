@@ -55,7 +55,7 @@
             "title" => "Menu",
 
             // controller
-            "file_name" => "Menu.class.php",
+            "file_name" => "MenuController.class.php",
             "class_name" => "Menu",
             // Role accessibility
             "access_value" => "0"
