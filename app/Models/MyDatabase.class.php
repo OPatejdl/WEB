@@ -43,7 +43,7 @@ class MyDatabase
      * @param string $orderByStatement Optional ORDER_BY statement defining a rule of order
      * @return array Empty array, if no data is found or query fails, otherwise fetched data as an array
      */
-    public function selectFromTable(string $table, string $whereStatement = "", string $orderByStatement = ""): array {
+    private function selectFromTable(string $table, string $whereStatement = "", string $orderByStatement = ""): array {
         $q = "SELECT * FROM ".$table.
             (($whereStatement == "") ? "" : " WHERE $whereStatement").
             (($orderByStatement == "") ? "" : " ORDER BY $orderByStatement");
@@ -63,7 +63,7 @@ class MyDatabase
      * @param string $whereStatement WHERE statement defining a condition
      * @return bool returns true if deleted successfully
      */
-    public function deleteFromTable(string $tableName, string $whereStatement): bool{
+    private function deleteFromTable(string $tableName, string $whereStatement): bool{
         $q = "DELETE FROM $tableName WHERE $whereStatement";
         $obj = $this->execQuery($q);
 
@@ -112,7 +112,8 @@ class MyDatabase
         return $this->selectFromTable(TABLE_PRODUCT, "fk_id_category = $idCategory");
     }
 
-    // Get MENU functions
+    ////////////////////////////////////////////////////////
+    // MENU functions
 
     /**
      * Function gets array of products with same category
@@ -146,15 +147,6 @@ class MyDatabase
     }
 
     /**
-     * Functions gets all reviews from DB
-     *
-     * @return array array of all reviews
-     */
-    public function getAllReviews(): array {
-        return $this->selectFromTable(TABLE_REVIEW);
-    }
-
-    /**
      * Function gets average rating of a product
      *
      * @param int $idProduct id of a product
@@ -172,6 +164,50 @@ class MyDatabase
         } else {
             return $totalRating / $ratings_count;
         }
+    }
+
+    ////////////////////////////////////////////////////////
+    // REVIEW functions
+    /**
+     * Functions gets all reviews from DB
+     *
+     * @return array array of all reviews
+     */
+    public function getAllReviews(): array {
+        return $this->selectFromTable(TABLE_REVIEW, "", "created_at");
+    }
+
+    private function getReviewsForProduct(int $idProduct): array {
+        $q = "
+        SELECT  r.id_review,
+                u.username AS user_name,
+                p.name AS product_name,
+                r.rating, r.description, r.created_at
+        FROM ".TABLE_REVIEW." r
+        LEFT JOIN ".TABLE_PRODUCT." p ON p.id_product = r.fk_id_product
+        LEFT JOIN ".TABLE_USER." u ON u.id_user = r.fk_id_user
+        WHERE p.id_product = $idProduct
+        ORDER BY r.created_at ASC;
+        ";
+
+        $obj = $this->execQuery($q);
+
+        if (!$obj) {
+            return [];
+        }
+
+        return $obj->fetchAll();
+    }
+
+    public function getAllReviewsFormated(): array {
+        $products = $this->getAllProducts();
+        $reviews = [];
+
+        foreach ($products as $product) {
+            $reviews[$product["name"]] = $this->getReviewsForProduct($product["id_product"]);
+        }
+
+        return $reviews;
     }
 }
 ?>

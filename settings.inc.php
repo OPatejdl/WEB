@@ -45,7 +45,7 @@
             "title" => "Recenze",
 
             // controller
-            "file_name" => "Reviews.class.php",
+            "file_name" => "ReviewsController.class.php",
             "class_name" => "Reviews",
             // Role accessibility
             "access_value" => "0"

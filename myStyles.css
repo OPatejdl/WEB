@@ -8,11 +8,11 @@
     text-decoration: underline;
 }
 
-.menu-section .list-group-item {
+.myBox-section .list-group-item {
     border:0;
     border-bottom:1px solid rgba(0,0,0,.075)
 }
 
-.menu-section .list-group-item:last-child{
+.myBox-section .list-group-item:last-child{
     border-bottom:0
 }
