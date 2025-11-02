@@ -36,7 +36,7 @@
 
             // controller
             "file_name" => "HomepageController.class.php",
-            "class_name" => "Homepage",
+            "class_name" => "HomepageController",
             // Role accessibility
             "access_value" => "0"
         ),
@@ -46,7 +46,7 @@
 
             // controller
             "file_name" => "ReviewsController.class.php",
-            "class_name" => "Reviews",
+            "class_name" => "ReviewsController",
             // Role accessibility
             "access_value" => "0"
         ),
@@ -56,7 +56,7 @@
 
             // controller
             "file_name" => "MenuController.class.php",
-            "class_name" => "Menu",
+            "class_name" => "MenuController",
             // Role accessibility
             "access_value" => "0"
         ),
@@ -65,8 +65,8 @@
             "title" => "Přihlášení",
 
             // controller
-            "file_name" => "Login.class.php",
-            "class_name" => "Login",
+            "file_name" => "LoginController.class.php",
+            "class_name" => "LoginController",
             // Role accessibility
             "access_value" => "0"
         ),
@@ -75,8 +75,8 @@
             "title" => "Registrace",
 
             // controller
-            "file_name" => "Register.class.php",
-            "class_name" => "Register",
+            "file_name" => "RegisterController.class.php",
+            "class_name" => "RegisterController",
             // Role accessibility
             "access_value" => "0"
         ),
@@ -85,8 +85,8 @@
             "title" => "Nová Recenze",
 
             // controller
-            "file_name" => "NewReview.class.php",
-            "class_name" => "NewReview",
+            "file_name" => "NewReviewController.class.php",
+            "class_name" => "NewReviewController",
             // Role accessibility
             "access_value" => "5"
         ),
@@ -95,8 +95,8 @@
             "title" => "Nový Produkt",
 
             // controller
-            "file_name" => "NewProduct.class.php",
-            "class_name" => "NewProduct",
+            "file_name" => "NewProductController.class.php",
+            "class_name" => "NewProductController",
             // Role accessibility
             "access_value" => "10"
         )

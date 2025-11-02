@@ -1,6 +1,6 @@
 <?php
 require_once(DIRECTORY_CONTROLLERS . "/IController.interface.php");
-class Homepage implements IController
+class HomepageController implements IController
 {
     /** @var MyDatabase $db Var for database handling **/
     private $db;

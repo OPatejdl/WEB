@@ -13,7 +13,7 @@
 <!-- Info -->
 <div class="row align-items-center justify-content-center py-5 mt-5">
     <div class="col">
-        <h1> Recenze </h1>
+        <h1 class="mb-0"> Recenze </h1>
     </div>
     <?php
         $btn_view = "";
@@ -21,7 +21,7 @@
             $btn_view = "
             <div class='col-auto'>
                 <form method='post'>
-                    <input type='hidden' name='newReview' value=''>
+                    <input type='hidden' name='action' value='newReview'>
                     <button type='submit' class='btn btn-dark'>Napsat Recenzi</button>
                 </form>
             </div>";

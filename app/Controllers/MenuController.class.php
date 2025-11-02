@@ -1,6 +1,6 @@
 <?php
 require_once(DIRECTORY_CONTROLLERS . "/IController.interface.php");
-class Menu implements IController {
+class MenuController implements IController {
 
     /** @var MyDatabase $db Var for database handling **/
     private MyDatabase $db;

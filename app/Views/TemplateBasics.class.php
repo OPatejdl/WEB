@@ -59,11 +59,11 @@
                                 <div class="d-flex ms-lg-3 gap-2">
                                 <?php if ($tplData["isLogged"]) {?>
                                     <!-- TODO: Implement case when user is logged -->
-                                    <a type='button' class='btn btn-primary' href='#'>Login</a>
-                                    <a type='button' class='btn btn-secondary' href='#'>Register</a>
+                                    <a type='button' class='btn btn-primary' href='index.php?page=login'>Login</a>
+                                    <a type='button' class='btn btn-secondary' href='index.php?page=register'>Register</a>
                                 <?php } else {?>
-                                    <a type='button' class='btn btn-primary' href='#'>Login</a>
-                                    <a type='button' class='btn btn-secondary' href='#'>Register</a>
+                                    <a type='button' class='btn btn-primary' href='index.php?page=login'>Login</a>
+                                    <a type='button' class='btn btn-secondary' href='index.php?page=register'>Register</a>
                                 <?php } ?>
                                 </div>
                             </div>
