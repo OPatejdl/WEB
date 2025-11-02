@@ -22,6 +22,13 @@ class Menu implements IController {
 
         $tplData["menu"] = $this->db->getMenu();
 
+        $tplData["products"] = $this->db->getAllProducts();
+
+        foreach ($tplData["products"] as $product) {
+            $tplData[htmlspecialchars($product["id_product"])."_rating"] =
+                $this->db->getAvgRating($product["id_product"]);
+        }
+
         ob_start();
 
         require(DIRECTORY_VIEW . "/MenuTemplate.php");
