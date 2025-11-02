@@ -53,9 +53,10 @@
                     </div>
                 </div>
             </div>
-
         </div>
         ";
+    } else {
+        $view .= "";
     }
 
     echo $view;

@@ -8,12 +8,19 @@ class MyDatabase
     /** @var PDO $pdo object for work with database*/
     private PDO $pdo;
 
+    /** @var MySession $session object for session handling */
+    private MySession $session;
+
+
     /**
      * constructor of MyDatabase class
      */
     public function __construct() {
         $this->pdo = new PDO("mysql:host=".DB_SERVER.";dbname=".DB_NAME, DB_USER, DB_PASS);
         $this->pdo->exec("set names utf8"); // require get data in UTF-8
+
+        require_once("MySession.class.php");
+        $session = new MySession();
     }
 
     ///////////////////////// General Functions /////////////////////////
@@ -75,6 +82,8 @@ class MyDatabase
     }
 
     ///////////////////////// Specific Functions /////////////////////////
+
+    /// USER AND ROLES
     /**
      * Function gets all users from DB order by their username
      *
@@ -84,6 +93,63 @@ class MyDatabase
         return $this->selectFromTable(TABLE_USER, "","username");
     }
 
+    public function getAllRoles(): array {
+        return $this->selectFromTable(TABLE_ROLE);
+    }
+
+    /**
+     * Function for getting hashed password for a user
+     *
+     * @param string $username username of user
+     * @return mixed|null null if no password found otherwise hashed password
+     */
+    public function getHashPassword(string $username) {
+        $username = htmlspecialchars($username);
+
+        $q = "SELECT password FROM ".TABLE_USER." WHERE username = :username";
+
+        $stmt = $this->pdo->prepare($q);
+
+        $stmt->bindValue(":username", $username);
+        $stmt->execute();
+
+        $hash = $stmt->fetchColumn();
+        return $hash ?: null;
+    }
+
+    /**
+     * Function add new user
+     *
+     * @param string $username
+     * @param string $password
+     * @param string $email
+     * @param int $idRole
+     * @return bool
+     */
+    public function addNewUser(string $username, string $password, string $email, int $idRole = 4): bool {
+        $username = htmlspecialchars($username);
+        $password = htmlspecialchars($password);
+        $email = htmlspecialchars($email);
+        $idRole = htmlspecialchars($idRole);
+
+        $q = "INSERT INTO opatejdl_user (fk_id_role, username, email, password) VALUES
+                                         (:id_role, :username, :email, :password)";
+
+        $stmt = $this->pdo->prepare($q);
+
+        $stmt->bindParam(":id_role", $idRole);
+        $stmt->bindParam(":username", $username);
+        $stmt->bindParam(":email", $email);
+        $stmt->bindParam(":password", $password);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// PRODUCTS AND CATEGORIES
     /**
      * Function gets all products from DB order by their name
      *
@@ -98,7 +164,7 @@ class MyDatabase
      *
      * @return array array of all products
      */
-    public function getAllProductsCategories(): array {
+    private function getAllProductsCategories(): array {
         return $this->selectFromTable(TABLE_CATEGORY, "","id_category");
     }
 
@@ -178,6 +244,8 @@ class MyDatabase
     }
 
     private function getReviewsForProduct(int $idProduct): array {
+        $idProduct = htmlspecialchars($idProduct);
+
         $q = "
         SELECT  r.id_review,
                 u.username AS user_name,
@@ -186,17 +254,18 @@ class MyDatabase
         FROM ".TABLE_REVIEW." r
         LEFT JOIN ".TABLE_PRODUCT." p ON p.id_product = r.fk_id_product
         LEFT JOIN ".TABLE_USER." u ON u.id_user = r.fk_id_user
-        WHERE p.id_product = $idProduct
+        WHERE p.id_product = :productId
         ORDER BY r.created_at ASC;
         ";
 
-        $obj = $this->execQuery($q);
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":productId", $idProduct);
 
-        if (!$obj) {
-            return [];
+        if ($stmt->execute()) {
+            return $stmt->fetchAll();
         }
 
-        return $obj->fetchAll();
+        return [];
     }
 
     public function getAllReviewsFormated(): array {
