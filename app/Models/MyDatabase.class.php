@@ -153,25 +153,5 @@ class MyDatabase
     public function getAllReviews(): array {
         return $this->selectFromTable(TABLE_REVIEW);
     }
-
-    /**
-     * Function gets average rating of a product
-     *
-     * @param int $idProduct id of a product
-     * @return float|null average rating value of certain product
-     */
-    public function getAvgRating(int $idProduct): float|null {
-        $productRating = $this->selectFromTable(TABLE_REVIEW, "fk_id_product = ".$idProduct);
-        $totalRating = 0;
-        foreach ($productRating as $rating) {
-            $totalRating = $totalRating + $rating["rating"];
-        }
-        $ratings_count = count($productRating);
-        if ($ratings_count == 0) {
-            return null;
-        } else {
-            return $totalRating / $ratings_count;
-        }
-    }
 }
 ?>
