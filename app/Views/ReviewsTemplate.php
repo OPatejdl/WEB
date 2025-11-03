@@ -19,12 +19,82 @@
         $btn_view = "";
         if ($tplData["isLogged"]) {
             $btn_view = "
-            <div class='col-auto'>
-                <form method='post'>
-                    <input type='hidden' name='action' value='newReview'>
-                    <button type='submit' class='btn btn-dark'>Napsat Recenzi</button>
-                </form>
-            </div>";
+            <div class='col-auto'> 
+                <button type='button' class='btn btn-dark shadow-sm' data-bs-toggle='modal' data-bs-target='#newReview'>
+                    <i class='bi bi-pencil-square me-1'></i> Napsat recenzi
+                </button>
+            
+                <div class='modal fade' id='newReview' tabindex='-1' aria-labelledby='newReviewLabel' aria-hidden='true'>
+                    <div class='modal-dialog modal-dialog-centered modal-dialog-scrollable'>
+                        <div class='modal-content border-0 shadow-lg'>
+                            
+                            <!-- HLAVIČKA -->
+                            <div class='modal-header bg-dark text-white'>
+                                <h5 class='modal-title fw-bold text-center w-100' id='newReviewLabel'>
+                                    <i class='bi bi-star-fill text-warning me-2 '></i>Nová recenze
+                                </h5>
+                                <button type='button' class='btn-close btn-close-white' data-bs-dismiss='modal' aria-label='Zavřít'></button>
+                            </div>
+            
+                            <!-- FORMULÁŘ -->
+                            <form action='' method='post' class='p-2'>
+                                <div class='modal-body'>
+                                    
+                                    <!-- Produkt -->
+                                    <div class='mb-3'>
+                                        <label for='productSelect' class='form-label fw-semibold'>🍽 Produkt</label>
+                                        <select class='form-select' id='productSelect' name='product' required>
+                                            <option value='' selected disabled>Vyberte položku…</option>";
+            foreach ($tplData["products"] as $product) {
+                $btn_view .= "<option value='" . $product["id_product"] . "'>" . $product["name"] . "</option>";
+            }
+            $btn_view .= "
+                                        </select>
+                                    </div>
+            
+                                    <!-- Hodnocení -->
+                                    <div class='mb-3'>
+                                        <label for='ratingSelect' class='form-label fw-semibold'>⭐ Hodnocení</label>
+                                        <select class='form-select' id='ratingSelect' name='rating' required>
+                                            <option value='' selected disabled>Vyberte hodnocení…</option>
+                                            <option value='0'>0.0</option>
+                                            <option value='0.5'>0.5</option>
+                                            <option value='1'>1.0</option>
+                                            <option value='1.5'>1.5</option>
+                                            <option value='2'>2.0</option>
+                                            <option value='2.5'>2.5</option>
+                                            <option value='3'>3.0</option>
+                                            <option value='3.5'>3.5</option>
+                                            <option value='4'>4.0</option>
+                                            <option value='4.5'>4.5</option>
+                                            <option value='5'>5.0</option>
+                                        </select>
+                                        <div class='form-text'>0 = nejhorší, 5 = nejlepší.</div>
+                                    </div>
+            
+                                    <!-- Popis -->
+                                    <div class='mb-3'>
+                                        <label for='reviewText' class='form-label fw-semibold'>📝 Popis</label>
+                                        <textarea class='form-control' id='reviewText' name='text' rows='4' placeholder='Jak ti chutnalo? Co bys vyzdvihl?' required></textarea>
+                                    </div>
+            
+                                </div>
+            
+                                <!-- PATIČKA -->
+                                <div class='modal-footer border-0'>
+                                    <button type='button' class='btn btn-outline-secondary' data-bs-dismiss='modal'>
+                                        <i class='bi bi-x-circle me-1'></i>Zavřít
+                                    </button>
+                                    <button type='submit' class='btn btn-primary'>
+                                        <i class='bi bi-send-fill me-1'></i>Odeslat recenzi
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ";
         }
         echo $btn_view;
     ?>
