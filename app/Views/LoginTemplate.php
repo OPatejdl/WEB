@@ -30,6 +30,7 @@
                         <h2 class='fw-bold text-center mb-4'>Přihlášení</h2>
             
                         <form method='POST' action=''>
+                            <input type='hidden' name='action' value='login'>
                             <!-- Username -->
                             <div class='form-floating mb-3'>
                                 <input type='text' class='form-control' id='login-username' name='username' required>
@@ -56,7 +57,63 @@
         </div>
         ";
     } else {
-        $view .= "";
+
+        $view .= "
+        <div class='row py-5'>
+            <div class='col-md-8 offset-md-2'>
+
+            <!-- Uživatelské informace -->
+            <div class='card mb-3 shadow-sm'>
+                <div class='card-body'>
+                    <h3 class='card-title fw-bold'>Profil uživatele</h3>
+                    <ul class='list-group list-group-flush list-unstyled'>
+                        <li><strong>Uživatelské jméno:</strong> " . $tplData['user']['username'] . "</li>
+                        <li><strong>E-mail:</strong> " . $tplData['user']['email'] . "</li>
+                        <li><strong>Role:</strong> " . $tplData['user']['role'] . "</li>
+                    <form method='POST' action=''>
+                        <input type='hidden' name='action' value='logout'>
+                        <button type='submit' class='btn btn-danger mt-3'>Odhlásit se</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <hr class='my-4'>
+        <h4 class='fw-bolder'>Moje recenze</h4>
+        ";
+
+        if (empty($tplData["user_reviews"])){
+            $view .= "<p>Zatím žádné recenze</p>";
+        } else {
+            foreach ($tplData["user_reviews"] as $productName => $productReviews) {
+                $view .= "
+                <section class='myBox-section card border-0 shadow-sm mb-5 w-100'>
+                  <div class='card-header bg-light'>
+                    <h2 class='mt-2 mb-2'>".$productName."</h2>
+                  </div>
+                  
+                  <div class='card-body p-0'>
+                    <ul class='list-group list-group-flush'>
+                ";
+
+                foreach ($productReviews as $productReview) {
+                    $stars = $tmplHeaders->setRatingSyle($productReview["rating"]);
+                    $view .= "
+                    <li class='list-group-item'>
+                        <div class='col'>
+                            <ul class='list-unstyled text-muted small mb-0'>
+                              <li> <i>" . $productReview["description"] . "</i></li>
+                              <li><strong>Hodnocení:</strong>" . $stars . "</li>
+                            </ul>
+                    </li>
+                    ";
+                }
+                $view .= "
+                    </ul>
+                  </div>
+                </section>";
+            }
+        }
     }
 
     echo $view;

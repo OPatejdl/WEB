@@ -11,6 +11,9 @@ class MyDatabase
     /** @var MySession $session object for session handling */
     private MySession $session;
 
+    /** @var string $userSessionKey key for user data saved in the session */
+    private string $userSessionKey = "current_user_id";
+
 
     /**
      * constructor of MyDatabase class
@@ -20,7 +23,7 @@ class MyDatabase
         $this->pdo->exec("set names utf8"); // require get data in UTF-8
 
         require_once("MySession.class.php");
-        $session = new MySession();
+        $this->session = new MySession();
     }
 
     ///////////////////////// General Functions /////////////////////////
@@ -95,26 +98,6 @@ class MyDatabase
 
     public function getAllRoles(): array {
         return $this->selectFromTable(TABLE_ROLE);
-    }
-
-    /**
-     * Function for getting hashed password for a user
-     *
-     * @param string $username username of user
-     * @return mixed|null null if no password found otherwise hashed password
-     */
-    public function getHashPassword(string $username) {
-        $username = htmlspecialchars($username);
-
-        $q = "SELECT password FROM ".TABLE_USER." WHERE username = :username";
-
-        $stmt = $this->pdo->prepare($q);
-
-        $stmt->bindValue(":username", $username);
-        $stmt->execute();
-
-        $hash = $stmt->fetchColumn();
-        return $hash ?: null;
     }
 
     /**
@@ -243,6 +226,12 @@ class MyDatabase
         return $this->selectFromTable(TABLE_REVIEW, "", "created_at");
     }
 
+    /**
+     * Function gets reviews of product
+     *
+     * @param int $idProduct - product id
+     * @return array array of reviews
+     */
     private function getReviewsForProduct(int $idProduct): array {
         $idProduct = htmlspecialchars($idProduct);
 
@@ -250,7 +239,7 @@ class MyDatabase
         SELECT  r.id_review,
                 u.username AS user_name,
                 p.name AS product_name,
-                r.rating, r.description, r.created_at
+                r.rating, r.description, r.created_at, r.publicity
         FROM ".TABLE_REVIEW." r
         LEFT JOIN ".TABLE_PRODUCT." p ON p.id_product = r.fk_id_product
         LEFT JOIN ".TABLE_USER." u ON u.id_user = r.fk_id_user
@@ -268,6 +257,11 @@ class MyDatabase
         return [];
     }
 
+    /**
+     * Function gets all reviews based on their product
+     *
+     * @return array formated array of reviews
+     */
     public function getAllReviewsFormated(): array {
         $products = $this->getAllProducts();
         $reviews = [];
@@ -278,5 +272,161 @@ class MyDatabase
 
         return $reviews;
     }
+
+    /**
+     *
+     *
+     * @param int $idProduct
+     * @param int $idUser
+     * @return array
+     */
+    private function getUserReviewsForProduct(int $idProduct, int $idUser): array {
+        $idUser = htmlspecialchars($idUser);
+
+        $q = "SELECT 
+                    r.rating, r.description, r.publicity
+                FROM ".TABLE_REVIEW." r 
+                WHERE fk_id_user = :idUser AND fk_id_product = :idProduct 
+                ORDER BY r.created_at ASC";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":idUser", $idUser);
+        $stmt->bindValue(":idProduct", $idProduct);
+
+        if ($stmt->execute()) {
+            return $stmt->fetchAll();
+        }
+
+        return [];
+    }
+
+    /**
+     * Function gets user's reviews
+     *
+     * @param int $idUser - user's id
+     * @return array array of reviews created by user with $idUser
+     */
+    public function getUserReviews(int $idUser): array {
+        $products = $this->getAllProducts();
+        $reviews = [];
+        foreach ($products as $product) {
+            $productReviews = $this->getUserReviewsForProduct($product["id_product"], $idUser);
+
+            if (!empty($productReviews)) {
+                $reviews[$product["name"]] = $productReviews;
+            }
+        }
+
+        return $reviews;
+    }
+
+    /////////////////////////////////////////////////
+    /// USER LOGIN FUNCTION
+
+    /**
+     * Function to inform if a user is logged
+     *
+     * @return bool true if user is logged otherwise false
+     */
+    public function isUserLoggedIn(): bool {
+        return isset($_SESSION[$this->userSessionKey]);
+    }
+
+    /**
+     * Function for getting hashed password for a user
+     *
+     * @param string $username username of user
+     * @return mixed|null null if no password found otherwise hashed password
+     */
+    public function getHashedPassword(string $username): mixed{
+        $username = htmlspecialchars($username);
+
+        $q = "SELECT password FROM ".TABLE_USER." WHERE username = :username";
+
+        $stmt = $this->pdo->prepare($q);
+
+        $stmt->bindValue(":username", $username);
+        $stmt->execute();
+
+        $hash = $stmt->fetchColumn();
+        return $hash ?: null;
+    }
+
+    /**
+     * Function logs in a user
+     *
+     * @param string $username user's name
+     * @return bool returns true if user exists otherwise false
+     */
+    public function loginUser(string $username): bool {
+        $username = htmlspecialchars($username);
+
+        $q = "SELECT * FROM ".TABLE_USER." WHERE username = :username";
+        $stmt = $this->pdo->prepare($q);
+
+        $stmt->bindValue(":username", $username);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $row = $stmt->fetch();
+            $_SESSION[$this->userSessionKey] = $row["id_user"];
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Function log's out user
+     */
+    public function logoutUser(): void {
+        unset($_SESSION[$this->userSessionKey]);
+    }
+
+    /**
+     * Function to get data for logged user
+     *
+     * @return array|null data about user if any exists
+     */
+    public function getLoggedUserData(): ?array
+    {
+        if (!$this->isUserLoggedIn()) {
+            echo "<script> console.log(`SERVER ERROR: No user logged in`);</script>";
+            return null;
+        }
+
+        $userId = $_SESSION[$this->userSessionKey];
+        if ($userId == null) {
+            echo "<script> console.log(`SERVER ERROR: User's ID in SESSION was null`);</script>";
+            $this->logoutUser();
+            return null;
+        } else {
+            $userId = htmlspecialchars($userId);
+
+            $q = "SELECT 
+                        u.id_user, u.username, u.email, u.created_at,
+                        r.name AS role
+                    FROM ".TABLE_USER." u
+                    LEFT JOIN ".TABLE_ROLE." r ON r.id_role = u.fk_id_role
+                    WHERE u.id_user = :userId";
+
+            $stmt = $this->pdo->prepare($q);
+            $stmt->bindValue(":userId", $userId);
+
+            if ($stmt->execute()) {
+                $userData = $stmt->fetch();
+            } else{
+                $userData = [];
+            }
+
+            if (empty($userData)) {
+                echo "<script> console.log(`SERVER ERROR: User's data are null`);</script>";
+                $this->logoutUser();
+                return null;
+            }
+
+            return $userData;
+        }
+    }
+
 }
-?>

@@ -19,7 +19,7 @@ class ReviewsController implements IController
 
         $tplData= [];
         $tplData["title"] = $pageTitle;
-        $tplData["isLogged"] = true;
+        $tplData["isLogged"] = $this->db->isUserLoggedIn();
 
         $tplData["reviews"] = $this->db->getAllReviewsFormated();
         $tplData["products"] = $this->db->getAllProducts();

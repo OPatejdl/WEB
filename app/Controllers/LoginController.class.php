@@ -25,7 +25,31 @@ class LoginController implements IController
 
         $tplData= [];
         $tplData["title"] = $pageTitle;
-        $tplData["isLogged"] = false;
+        $tplData["user"] = [];
+        $tplData["error"] = "";
+
+        // Login action
+        if (isset($_POST['action'])) {
+            if ($_POST['action'] == "login" && isset($_POST['username']) && isset($_POST['password'])) {
+                if (password_verify($_POST['password'], $this->db->getHashedPassword($_POST['username']))) {
+                    $res = $this->db->loginUser($_POST["username"]);
+                    if (!$res) {
+                        $tplData["error"] = "Neplatné uživatelské jméno nebo heslo";
+                    }
+                } else {
+                    $tplData["error"] = "Neplatné uživatelské jméno nebo heslo";
+                }
+            } elseif ($_POST["action"] == "logout") {
+                $this->db->logoutUser();
+            }
+        }
+
+        $tplData["isLogged"] = $this->db->isUserLoggedIn();
+        if ($tplData["isLogged"]) {
+            $tplData["user"] = $this->db->getLoggedUserData();
+            $user = $tplData["user"];
+            $tplData["user_reviews"] = $this->db->getUserReviews($user["id_user"]);
+        }
 
         ob_start();
 

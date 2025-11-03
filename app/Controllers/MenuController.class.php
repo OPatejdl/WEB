@@ -18,7 +18,8 @@ class MenuController implements IController {
 
         $tplData= [];
         $tplData["title"] = $pageTitle;
-        $tplData["isLogged"] = false;
+
+        $tplData["isLogged"] = $this->db->isUserLoggedIn();
 
         $tplData["menu"] = $this->db->getMenu();
 

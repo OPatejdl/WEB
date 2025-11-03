@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS opatejdl_review (
     rating              TINYINT UNSIGNED NOT NULL,
     description         VARCHAR(1000) NULL,
     created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    publicity           TINYINT UNSIGNED NOT NUlL,
     UNIQUE KEY uq_review_user_product (fk_id_user, fk_id_product),
     KEY idx_review_user (fk_id_user),
     KEY idx_review_product (fk_id_product),
@@ -139,10 +140,10 @@ INSERT INTO opatejdl_product (id_product, fk_id_category, name, price, photo_url
  (3, 3, 'Jablečný štrúdl',         79, 'data/img/strudl.jpg'),
  (4, 4, 'Domácí limonáda',         55, 'data/img/limonada.jpg');
 
-INSERT INTO opatejdl_review (id_review, fk_id_user, fk_id_product, rating, description) VALUES
- (1, 10, 1, 5, 'Výborná polévka, poctivý česnek.'),
- (2, 11, 2, 4, 'Klasika, omáčka super, knedlík by mohl být lepší.'),
- (3, 12, 3, 5, 'Teplý a křupavý, přesně jak má být.'),
- (4, 13, 4, 3, 'Osvěžující, nicméně nic extra.');
+INSERT INTO opatejdl_review (id_review, fk_id_user, fk_id_product, rating, description, publicity) VALUES
+ (1, 10, 1, 5, 'Výborná polévka, poctivý česnek.', 1),
+ (2, 11, 2, 4, 'Klasika, omáčka super, knedlík by mohl být lepší.', 1),
+ (3, 11, 3, 5, 'Teplý a křupavý, přesně jak má být.', 0),
+ (4, 10, 4, 3, 'Osvěžující, nicméně nic extra.', 1);
 
 COMMIT;
