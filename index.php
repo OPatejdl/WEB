@@ -5,4 +5,3 @@
 
     $app = new AppStart();
     $app->appStart();
-?>
