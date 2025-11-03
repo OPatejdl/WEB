@@ -1,12 +1,12 @@
 <?php
 require_once(DIRECTORY_CONTROLLERS . "/IController.interface.php");
-class HomepageController implements IController
+class ReviewsController implements IController
 {
     /** @var MyDatabase $db Var for database handling **/
-    private $db;
+    private MyDatabase $db;
 
     /**
-     * Constructor for Homepage class
+     * Reviews class constructore
      */
     public function __construct() {
         require_once(DIRECTORY_MODELS . "/MyDatabase.class.php");
@@ -16,14 +16,17 @@ class HomepageController implements IController
     public function show(string $pageTitle): string
     {
         global $tplData;
-        $tplData = [];
+
+        $tplData= [];
         $tplData["title"] = $pageTitle;
         $tplData["isLogged"] = $this->db->isUserLoggedIn();
 
-        ob_start();
-        require(DIRECTORY_VIEW . "/HomepageTemplate.php");
+        $tplData["reviews"] = $this->db->getAllReviewsFormated();
+        $tplData["products"] = $this->db->getAllProducts();
 
-        // return template with data
+        ob_start();
+        require(DIRECTORY_VIEW . "/ReviewsTemplate.php");
+
         return ob_get_clean();
     }
 }

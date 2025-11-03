@@ -16,7 +16,7 @@
         if (count($category[1]) > 0) {
             // Category Card Header
             $view .= "
-        <section class='menu-section card border-0 shadow-sm mb-5 w-100'>
+        <section class='myBox-section card border-0 shadow-sm mb-5 w-100'>
           <div class='card-header bg-light'>
             <h2 class='mt-2 mb-2'>$category[0]</h2>
           </div>
@@ -28,22 +28,7 @@
             foreach ($category[1] as $product) {
                 // Rating
                 $rating = floatval($tplData[htmlspecialchars($product["id_product"])."_rating"]);
-                $stars = "";
-                if ($rating == null) {
-                    $stars = "<span class='text-muted fst-italic'>Neohodnoceno</span>";;
-                } else {
-                    $maxStars = 5;
-                    for ($i = 1; $i <= $maxStars; $i++) {
-                        if ($i <= floor($rating)) {
-                            $stars .= '<i class="fa fa-star" style="color: gold;"></i>';
-                        } elseif ($i - 0.5 <= $rating) {
-                            $stars .= '<i class="fa fa-star-half-alt" style="color: gold;"></i>';
-                        } else {
-                            $stars .= '<i class="fa fa-star-o" style="color: gold;"></i>';
-                        }
-                    }
-                    $stars .= " (".number_format($rating, 1)." / $maxStars)";
-                }
+                $stars = $tmplHeaders->setRatingSyle($rating);
 
                 // Product View
                 $view .= "

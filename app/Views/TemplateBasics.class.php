@@ -59,9 +59,11 @@
                                 <div class="d-flex ms-lg-3 gap-2">
                                 <?php if ($tplData["isLogged"]) {?>
                                     <!-- TODO: Implement case when user is logged -->
+                                    <a type='button' class='btn btn-primary' href='index.php?page=login'>Moje Info</a>
+                                    <a type='button' class='btn btn-secondary' href='index.php?page=register'>Register</a>
                                 <?php } else {?>
-                                    <a type='button' class='btn btn-primary' href='#'>Login</a>
-                                    <a type='button' class='btn btn-secondary' href='#'>Register</a>
+                                    <a type='button' class='btn btn-primary' href='index.php?page=login'>Login</a>
+                                    <a type='button' class='btn btn-secondary' href='index.php?page=register'>Register</a>
                                 <?php } ?>
                                 </div>
                             </div>
@@ -89,9 +91,9 @@
                                 <h5 class="fw-bold text-warning mb-3">
                                     Otevírací doba
                                 </h5>
-                                <ul class="list-unstyled mb-2 ms-4">
-                                    <li>Po–Čt: 14:00–23:00</li>
-                                    <li>Pá–So: 14:00–01:00</li>
+                                <ul class="list-unstyled mb-2 ms-3">
+                                    <li class="mb-1">Po–Čt: 14:00–23:00</li>
+                                    <li class="mb-1">Pá–So: 14:00–01:00</li>
                                     <li>Ne: Zavřeno</li>
                                 </ul>
                             </div>
@@ -113,16 +115,16 @@
 
                             <!-- Social Media -->
                             <div class="col-md-4">
-                                <h5 class="fw-bold text-warning mb-2">
+                                <h5 class="fw-bold text-warning mb-3">
                                     Sledujte nás
                                 </h5>
-                                <ul class="list-unstyled justify-content-center justify-content-md-start ms-2 mb-0">
-                                    <li>
+                                <ul class="list-unstyled justify-content-center justify-content-md-start ms-3 mb-1">
+                                    <li class="mb-1">
                                         <a href="https://github.com/OPatejdl/WEB" target="_blank" class="text-white text-decoration-none fs-6">
                                             GitHub
                                         </a>
                                     </li>
-                                    <li>
+                                    <li class="mb-1">
                                         <a href="https://facebook.com" target="_blank" class="text-white text-decoration-none fs-6">
                                             Facebook
                                         </a>
@@ -150,6 +152,28 @@
                 </body>
             </html>
             <?php
+        }
+
+        public function setRatingSyle(float $rating): string {
+            $stars = "";
+
+            if ($rating == null) {
+                $stars = "<span class='text-muted fst-italic'>Neohodnoceno</span>";;
+            } else {
+                $maxStars = 5;
+                for ($i = 1; $i <= $maxStars; $i++) {
+                    if ($i <= floor($rating)) {
+                        $stars .= '<i class="fa fa-star" style="color: gold;"></i>';
+                    } elseif ($i - 0.5 <= $rating) {
+                        $stars .= '<i class="fa fa-star-half-alt" style="color: gold;"></i>';
+                    } else {
+                        $stars .= '<i class="fa fa-star-o" style="color: gold;"></i>';
+                    }
+                }
+                $stars .= " (".number_format($rating, 1)." / $maxStars)";
+            }
+
+            return $stars;
         }
     }
 ?>
