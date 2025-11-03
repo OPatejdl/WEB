@@ -17,7 +17,7 @@
     </div>
     <?php
         $btn_view = "";
-        if ($tplData["isLogged"]) {
+        if ($tplData["isLogged"] && $tplData["user"]["priority"] >= WEB_MODALS["newReview"]["access_value"]) {
             $btn_view = "
             <div class='col-auto'> 
                 <button type='button' class='btn btn-dark shadow-sm' data-bs-toggle='modal' data-bs-target='#newReview'>
@@ -37,16 +37,17 @@
                             </div>
             
                             <!-- FORMULÁŘ -->
-                            <form action='' method='post' class='p-2'>
+                            <form action='' method='POST' class='p-2'>
+                                <input type='hidden' name='action' value='newReview'>
                                 <div class='modal-body'>
                                     
                                     <!-- Produkt -->
                                     <div class='mb-3'>
                                         <label for='productSelect' class='form-label fw-semibold'>🍽 Produkt</label>
-                                        <select class='form-select' id='productSelect' name='product' required>
+                                        <select class='form-select' id='productSelect' name='newReview_Product' required>
                                             <option value='' selected disabled>Vyberte položku…</option>";
             foreach ($tplData["products"] as $product) {
-                $btn_view .= "<option value='" . $product["id_product"] . "'>" . $product["name"] . "</option>";
+                $btn_view .= "<option value='{$product["id_product"]}'>{$product["name"]}</option>";
             }
             $btn_view .= "
                                         </select>
@@ -55,7 +56,7 @@
                                     <!-- Hodnocení -->
                                     <div class='mb-3'>
                                         <label for='ratingSelect' class='form-label fw-semibold'>⭐ Hodnocení</label>
-                                        <select class='form-select' id='ratingSelect' name='rating' required>
+                                        <select class='form-select' id='ratingSelect' name='newReview_Rating' required>
                                             <option value='' selected disabled>Vyberte hodnocení…</option>
                                             <option value='0'>0.0</option>
                                             <option value='0.5'>0.5</option>
@@ -75,7 +76,7 @@
                                     <!-- Popis -->
                                     <div class='mb-3'>
                                         <label for='reviewText' class='form-label fw-semibold'>📝 Popis</label>
-                                        <textarea class='form-control' id='reviewText' name='text' rows='4' placeholder='Jak ti chutnalo? Co bys vyzdvihl?' required></textarea>
+                                        <textarea class='form-control' id='reviewText' name='newReview_Description' rows='4' placeholder='Jak ti chutnalo? Co bys vyzdvihl?' required></textarea>
                                     </div>
             
                                 </div>

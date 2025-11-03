@@ -405,7 +405,8 @@ class MyDatabase
 
             $q = "SELECT 
                         u.id_user, u.username, u.email, u.created_at,
-                        r.name AS role
+                        r.name AS role,
+                        r.priority AS priority
                     FROM ".TABLE_USER." u
                     LEFT JOIN ".TABLE_ROLE." r ON r.id_role = u.fk_id_role
                     WHERE u.id_user = :userId";
@@ -476,4 +477,52 @@ class MyDatabase
         return false;
     }
 
+    //////////////////////////////////////////////////////
+    /// New Review Checks
+    /**
+     * Function checks if product's with productId exists or not
+     *
+     * @param int $productId product's id for check
+     * @return bool true if exists otherwise false
+     */
+    public function productIdExists(int $productId): bool {
+        $productId = htmlspecialchars($productId);
+
+        $q = "SELECT name FROM ".TABLE_PRODUCT." WHERE id_product = :productId";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":productId", $productId);
+
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    public function addNewReview(string $id_user, string $id_product, string $rating, string $description, int $publicity = 1): bool {
+        $idUser = htmlspecialchars($id_user);
+        $idProduct = htmlspecialchars($id_product);
+        $rating = htmlspecialchars($rating);
+        $description = htmlspecialchars($description);
+        $publicity = htmlspecialchars($publicity);
+
+        $q = "INSERT INTO opatejdl_review (fk_id_user, fk_id_product, rating, description, publicity) VALUES
+                                         (:id_user, :id_product, :rating, :description, :publicity)";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":id_user", $idUser);
+        $stmt->bindValue(":id_product", $idProduct);
+        $stmt->bindValue(":rating", $rating);
+        $stmt->bindValue(":description", $description);
+        $stmt->bindValue(":publicity", $publicity);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+        return false;
+    }
 }

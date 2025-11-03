@@ -81,16 +81,6 @@
             "access_value" => "0"
         ),
 
-        "newReview" => array(
-            "title" => "Nová Recenze",
-
-            // controller
-            "file_name" => "NewReviewController.class.php",
-            "class_name" => "NewReviewController",
-            // Role accessibility
-            "access_value" => "5"
-        ),
-
         "newProduct" => array(
             "title" => "Nový Produkt",
 
@@ -99,5 +89,11 @@
             "class_name" => "NewProductController",
             // Role accessibility
             "access_value" => "10"
+        )
+    );
+
+    const WEB_MODALS = array(
+        "newReview" => array(
+            "access_value" => "5"
         )
     );
