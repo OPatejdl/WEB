@@ -429,4 +429,51 @@ class MyDatabase
         }
     }
 
+    //////////////////////////////////////////////////////
+    /// Register Checks
+
+    /**
+     * Function checks if username exists or not
+     *
+     * @param string $username evaluating username
+     * @return bool true if exists otherwise false
+     */
+    public function isUsernameTaken(string $username): bool {
+        $username = htmlspecialchars($username);
+
+        $q = "SELECT username FROM ".TABLE_USER." WHERE username = :username";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":username", $username);
+
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Function checks if email exists or not
+     *
+     * @param string $email evaluating email
+     * @return bool true if exists otherwise false
+     */
+    public function isEmailTaken(string $email): bool {
+        $email = htmlspecialchars($email);
+
+        $q = "SELECT email FROM ".TABLE_USER." WHERE email = :email";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":email", $email);
+
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

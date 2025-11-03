@@ -30,4 +30,3 @@ class AppStart
         echo $controller->show($pageInfo["title"]);
     }
 }
-?>

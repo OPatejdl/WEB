@@ -26,19 +26,31 @@
                 <div class='card border-0 shadow rounded-4'>
                     <div class='card-body p-4 p-lg-5'>
                         <h2 class='fw-bold text-center mb-4'>Registrace</h2>
-                    
+            ";
+
+    if ($tplData["error"] != "") {
+        $view .= "
+                        <div class='text-center text-danger fw-semibold mb-3'>
+                            " . htmlspecialchars($tplData["error"]) . "
+                        </div>
+                ";
+    }
+
+    $view .="           
                         <form method='POST' action=''>
                             <input type='hidden' name='action' value='register'>
         
                             <!-- Username -->
                             <div class='form-floating mb-3'>
-                                <input type='text' class='form-control' id='register-username' name='username' required>
+                                <input  type='text' class='form-control' id='register-username' name='username' 
+                                        value='{$tplData["username"]}' required>
                                 <label for='register-username'>Uživatelské jméno</label>
                             </div>
                             
                             <!-- Email -->
                             <div class='form-floating mb-3'>
-                                <input type='email' class='form-control' id='register-email' name='email' required>
+                                <input  type='email' class='form-control' id='register-email' name='email' 
+                                        value='{$tplData["email"]}' required>
                                 <label for='register-email'>Email</label>
                             </div>
         
@@ -50,7 +62,7 @@
                             
                             <!-- Repeat Password -->
                             <div class='form-floating mb-4'>
-                                <input type='password' class='form-control' id='register-password-repeat' name='password' required minlength='6'>
+                                <input type='password' class='form-control' id='register-password-repeat' name='password_repeat' required minlength='6'>
                                 <label for='register-password_repeat'>Heslo Podruhé</label>
                             </div>
         
