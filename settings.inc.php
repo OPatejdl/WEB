@@ -15,6 +15,9 @@
     const TABLE_PRODUCT = "opatejdl_product";
     const TABLE_CATEGORY = "opatejdl_category";
 
+    // roles definition
+    const ROLE_CONSUMER = "Consumer";
+
 /////// Websites Setup //////
     /** Define root address **/
     const ROOT_DIRECTORY = __DIR__;
@@ -81,16 +84,6 @@
             "access_value" => "0"
         ),
 
-        "newReview" => array(
-            "title" => "Nová Recenze",
-
-            // controller
-            "file_name" => "NewReviewController.class.php",
-            "class_name" => "NewReviewController",
-            // Role accessibility
-            "access_value" => "5"
-        ),
-
         "newProduct" => array(
             "title" => "Nový Produkt",
 
@@ -99,5 +92,11 @@
             "class_name" => "NewProductController",
             // Role accessibility
             "access_value" => "10"
+        )
+    );
+
+    const WEB_MODALS = array(
+        "newReview" => array(
+            "access_value" => "5"
         )
     );

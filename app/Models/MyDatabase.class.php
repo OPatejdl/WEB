@@ -405,7 +405,8 @@ class MyDatabase
 
             $q = "SELECT 
                         u.id_user, u.username, u.email, u.created_at,
-                        r.name AS role
+                        r.name AS role,
+                        r.priority AS priority
                     FROM ".TABLE_USER." u
                     LEFT JOIN ".TABLE_ROLE." r ON r.id_role = u.fk_id_role
                     WHERE u.id_user = :userId";
@@ -470,6 +471,117 @@ class MyDatabase
 
         $stmt->execute();
         if ($stmt->rowCount() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    //////////////////////////////////////////////////////
+    /// New Review Checks
+    /**
+     * Function checks if product's with productId exists or not
+     *
+     * @param int $productId product's id for check
+     * @return bool true if exists otherwise false
+     */
+    public function productIdExists(int $productId): bool {
+        $productId = htmlspecialchars($productId);
+
+        $q = "SELECT name FROM ".TABLE_PRODUCT." WHERE id_product = :productId";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":productId", $productId);
+
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    public function addNewReview(string $id_user, string $id_product, string $rating, string $description, int $publicity = 1): bool {
+        $idUser = htmlspecialchars($id_user);
+        $idProduct = htmlspecialchars($id_product);
+        $rating = htmlspecialchars($rating);
+        $description = htmlspecialchars($description);
+        $publicity = htmlspecialchars($publicity);
+
+        $q = "INSERT INTO opatejdl_review (fk_id_user, fk_id_product, rating, description, publicity) VALUES
+                                         (:id_user, :id_product, :rating, :description, :publicity)";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":id_user", $idUser);
+        $stmt->bindValue(":id_product", $idProduct);
+        $stmt->bindValue(":rating", $rating);
+        $stmt->bindValue(":description", $description);
+        $stmt->bindValue(":publicity", $publicity);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Function gets all priorities in the DB
+     *
+     * @return array array of priorities based on their role
+     */
+    public function getAllPriorities(): array {
+        $priorities = [];
+
+        $allPriorities = $this->selectFromTable(TABLE_ROLE);
+
+        foreach ($allPriorities as $priorite) {
+            $priorities[$priorite["name"]] = $priorite["priority"];
+        }
+
+        return $priorities;
+    }
+
+    ////////////////////////////////////////////////////////////////
+    /// Change publicity
+    /**
+     * Function checks if review's with reviewId exists or not
+     *
+     * @param int $reviewId review's id for check
+     * @return bool true if exists otherwise false
+     */
+    public function reviewIdExists(int $reviewId): bool {
+        $reviewId = htmlspecialchars($reviewId);
+
+        $q = "SELECT rating FROM ".TABLE_REVIEW." WHERE id_review = :reviewId";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":reviewId", $reviewId);
+
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function updateReviewPublicity(string $idReview, int $current): bool {
+        $idReview = htmlspecialchars($idReview);
+
+        $q = "UPDATE " . TABLE_REVIEW . " SET publicity = :publicity WHERE id_review = :idReview";
+
+        $stmt = $this->pdo->prepare($q);
+        if ($current == 0) {
+            $stmt->bindValue(":publicity", 1);
+        } else {
+            $stmt->bindValue(":publicity", 0);
+        }
+
+        $stmt->bindValue(":idReview", $idReview);
+
+        if ($stmt->execute()) {
             return true;
         }
 
