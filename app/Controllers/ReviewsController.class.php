@@ -26,6 +26,7 @@ class ReviewsController implements IController
 
         $tplData["reviews"] = $this->db->getAllReviewsFormated();
         $tplData["products"] = $this->db->getAllProducts();
+        $tplData["priorities"] = $this->db->getAllPriorities();
 
         if (isset($_POST["action"])) {
 
@@ -58,8 +59,30 @@ class ReviewsController implements IController
                     echo "<script> console.log('New Review - Product with this Id does not exist') </script>";
                 }
 
-            } else {
-                echo "<script> console.log('New Review - No data!') </script>";
+            }
+
+            elseif ($_POST["action"] == "changePublicity" && isset($_POST["public_Review_id"])
+                && isset($_POST["public_current_publicity"])) {
+                $publicity = (int) $_POST["public_current_publicity"];
+                if ($this->db->reviewIdExists($_POST["public_Review_id"])) {
+                    if ($publicity == 0 || $publicity == 1) {
+                        $res = $this->db->updateReviewPublicity($_POST["public_Review_id"], $publicity);
+                        if ($res) {
+                            header('Location: ' . $_SERVER['REQUEST_URI']);
+                            exit();
+                        } else {
+                            // TODO: Inform user about problem
+                            echo "<script> console.log('Publicity of Review - Problem on DB') </script>";
+                        }
+                    } else {
+                        echo "<script> console.log('Publicity of Review - Invalid publicity') </script>";
+                    }
+                } else {
+                    echo "<script> console.log('Publicity of Review - Review does not exist') </script>";
+                }
+            }
+            else {
+                echo "<script> console.log('Review Page - No data!') </script>";
             }
         }
 

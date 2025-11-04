@@ -15,6 +15,9 @@
     const TABLE_PRODUCT = "opatejdl_product";
     const TABLE_CATEGORY = "opatejdl_category";
 
+    // roles definition
+    const ROLE_CONSUMER = "Consumer";
+
 /////// Websites Setup //////
     /** Define root address **/
     const ROOT_DIRECTORY = __DIR__;

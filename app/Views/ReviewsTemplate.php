@@ -108,9 +108,8 @@
     foreach ($tplData["products"] as $product) {
         if (isset($tplData["reviews"][$product["name"]]) && $tplData["reviews"][$product["name"]] != null) {
             $public_count = 0;
-            $review_card = "";
 
-            $review_card .= "
+            $review_card = "
             <section class='myBox-section card border-0 shadow-sm mb-5 w-100'>
               <div class='card-header bg-light'>
                 <h2 class='mt-2 mb-2'>".$product["name"]."</h2>
@@ -120,19 +119,52 @@
             ";
 
             foreach ($tplData["reviews"][$product["name"]] as $review) {
-                if ($review["publicity"] == 1) {
+                if (!$tplData["isLogged"] || $tplData["user"]["priority"] <= $tplData["priorities"][ROLE_CONSUMER]) {
+                    if ($review["publicity"] == 1) {
+                        $stars = $tmplHeaders->setRatingSyle($review["rating"]);
+                        $review_card .= "
+                        <li class='list-group-item'>
+                            <div class='d-flex flex-column'>
+                                <h5 class='mb-1'>" . $review["user_name"] . "</h5>
+                                <ul class='list-unstyled text-muted small mb-0'>
+                                  <li> <i>" . $review["description"] . "</i></li>
+                                  <li><strong>Hodnocení:</strong>" . $stars . "</li>
+                                </ul>
+                            </div>
+                        </li>
+                        ";
+                        $public_count++;
+                    }
+                } else {
+                    $public_count++;
                     $stars = $tmplHeaders->setRatingSyle($review["rating"]);
                     $review_card .= "
-                    <li class='list-group-item'>
-                        <div class='col'>
-                            <h5 class='mb-1'>" . $review["user_name"] . "</h5>
-                            <ul class='list-unstyled text-muted small mb-0'>
-                              <li> <i>" . $review["description"] . "</i></li>
-                              <li><strong>Hodnocení:</strong>" . $stars . "</li>
-                            </ul>
-                    </li>
+                        <li class='list-group-item'>
+                            <div class='col'>
+                                <h5 class='mb-1'>" . $review["user_name"] . "</h5>
+                                <ul class='list-unstyled text-muted small mb-0'>
+                                  <li> <i>" . $review["description"] . "</i></li>
+                                  <li><strong>Hodnocení:</strong>" . $stars . "</li>
+                                </ul>
+                                
+                                <form action='' method='POST' class='text-end mt-auto'>
+                                    <input type='hidden' name='action' value='changePublicity'>
+                                    <input type='hidden' name='public_current_publicity' value='{$review["publicity"]}'>
+                                    <input type='hidden' name='public_Review_id' value='{$review["id_review"]}'>";
+                    if ($review["publicity"] == 1) {
+                        $review_card .= "<button type='submit' class='btn btn-outline-primary btn-sm'>
+                                        <i class='bi bi-eye me-1'></i> Skrýt
+                                    </button>";
+                    } else {
+                        $review_card .= "<button type='submit' class='btn btn-outline-success btn-sm'>
+                                        <i class='bi bi-eye me-1'></i> Zveřejnit
+                                    </button>";
+                    }
+                    $review_card .= "
+                                </form>
+                            </div>
+                        </li>
                     ";
-                    $public_count++;
                 }
             }
 

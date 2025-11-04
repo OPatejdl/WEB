@@ -525,4 +525,67 @@ class MyDatabase
 
         return false;
     }
+
+    /**
+     * Function gets all priorities in the DB
+     *
+     * @return array array of priorities based on their role
+     */
+    public function getAllPriorities(): array {
+        $priorities = [];
+
+        $allPriorities = $this->selectFromTable(TABLE_ROLE);
+
+        foreach ($allPriorities as $priorite) {
+            $priorities[$priorite["name"]] = $priorite["priority"];
+        }
+
+        return $priorities;
+    }
+
+    ////////////////////////////////////////////////////////////////
+    /// Change publicity
+    /**
+     * Function checks if review's with reviewId exists or not
+     *
+     * @param int $reviewId review's id for check
+     * @return bool true if exists otherwise false
+     */
+    public function reviewIdExists(int $reviewId): bool {
+        $reviewId = htmlspecialchars($reviewId);
+
+        $q = "SELECT rating FROM ".TABLE_REVIEW." WHERE id_review = :reviewId";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":reviewId", $reviewId);
+
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function updateReviewPublicity(string $idReview, int $current): bool {
+        $idReview = htmlspecialchars($idReview);
+
+        $q = "UPDATE " . TABLE_REVIEW . " SET publicity = :publicity WHERE id_review = :idReview";
+
+        $stmt = $this->pdo->prepare($q);
+        if ($current == 0) {
+            $stmt->bindValue(":publicity", 1);
+        } else {
+            $stmt->bindValue(":publicity", 0);
+        }
+
+        $stmt->bindValue(":idReview", $idReview);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+        return false;
+    }
+
 }
