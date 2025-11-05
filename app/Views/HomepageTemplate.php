@@ -16,11 +16,13 @@
     </div>
 
     <!-- Picture -->
-    <div class="col-md-5">
+    <div class="col-md-5 d-flex justify-content-end align-items-center">
         <img alt="Obrázek hospůdky"
              src="data/foto_hospoda.png"
-             class="img-fluid rounded "
-             style="max-height: 400px; object-fit: cover;"
+             class="img-fluid rounded"
+             style="height: auto;
+                    object-fit: cover;
+                    width: 100%;"
         >
     </div>
 </div>

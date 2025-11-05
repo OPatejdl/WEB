@@ -20,10 +20,14 @@ class MenuController implements IController {
         $tplData["title"] = $pageTitle;
 
         $tplData["isLogged"] = $this->db->isUserLoggedIn();
+        if ($tplData["isLogged"]) {
+            $tplData["user"] = $this->db->getLoggedUserData();
+        }
 
         $tplData["menu"] = $this->db->getMenu();
 
         $tplData["products"] = $this->db->getAllProducts();
+        $tplData["categories"] = $this->db->getAllCategories();
 
         foreach ($tplData["products"] as $product) {
             $tplData[htmlspecialchars($product["id_product"])."_rating"] =

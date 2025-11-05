@@ -98,5 +98,9 @@
     const WEB_MODALS = array(
         "newReview" => array(
             "access_value" => "5"
+        ),
+
+        "newProduct" => array(
+            "access_value" => "10"
         )
     );

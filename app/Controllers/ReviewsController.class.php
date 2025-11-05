@@ -34,26 +34,32 @@ class ReviewsController implements IController
                 && isset($_POST["newReview_Description"]) && isset($_POST["newReview_Rating"])) {
 
                 if ($this->db->productIdExists((int)$_POST["newReview_Product"])) {
-                    $rating = (float)$_POST["newReview_Rating"];
-                    if ($rating >= 0 && $rating <= 5) {
+                    if (!$this->db->checkIfReviewExists($tplData["user"]["id_user"], $_POST["newReview_Product"])) {
+                        $rating = (float)$_POST["newReview_Rating"];
+                        if ($rating >= 0 && $rating <= 5) {
 
-                        if ($_POST["newReview_Description"] != "") {
-                            $res = $this->db->addNewReview($tplData["user"]["id_user"], $_POST["newReview_Product"],
-                                                            $_POST["newReview_Rating"], $_POST["newReview_Description"]);
-                            if ($res) {
-                                header('Location: ' . $_SERVER['REQUEST_URI']);
-                                exit();
+                            if ($_POST["newReview_Description"] != "") {
+                                $res = $this->db->addNewReview($tplData["user"]["id_user"], $_POST["newReview_Product"],
+                                    $_POST["newReview_Rating"], $_POST["newReview_Description"]);
+                                if ($res) {
+                                    header('Location: ' . $_SERVER['REQUEST_URI']);
+                                    exit();
+                                } else {
+                                    echo "<script> console.log('New Review - Fail on DB') </script>";
+                                }
+
                             } else {
-                                echo "<script> console.log('New Review - Fail on DB') </script>";
+                                echo "<script> console.log('New Review - Empty Description') </script>";
                             }
 
                         } else {
-                            echo "<script> console.log('New Review - Empty Description') </script>";
+                            echo "<script> console.log('New Review - Rating needs to be >= 0 and <= 5') </script>";
                         }
-
-                    } else {
-                        echo "<script> console.log('New Review - Rating needs to be >= 0 and <= 5') </script>";
                     }
+                    else {
+                        echo "<script> console.log('New Review - Review for product already exists') </script>";
+                    }
+
 
                 } else {
                     echo "<script> console.log('New Review - Product with this Id does not exist') </script>";

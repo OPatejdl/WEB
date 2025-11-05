@@ -101,6 +101,15 @@ class MyDatabase
     }
 
     /**
+     * Function gets all possible categories for product
+     *
+     * @return array products categories
+     */
+    public function getAllCategories(): array {
+        return $this->selectFromTable(TABLE_CATEGORY);
+    }
+
+    /**
      * Function add new user
      *
      * @param string $username
@@ -536,11 +545,34 @@ class MyDatabase
 
         $allPriorities = $this->selectFromTable(TABLE_ROLE);
 
-        foreach ($allPriorities as $priorite) {
-            $priorities[$priorite["name"]] = $priorite["priority"];
+        foreach ($allPriorities as $priority) {
+            $priorities[$priority["name"]] = $priority["priority"];
         }
 
         return $priorities;
+    }
+
+    /**
+     * Function checks if a review of product from the user exists
+     *
+     * @param string $id_user user's id
+     * @param string $id_product product's id
+     * @return bool true if review on certain product from the user exists otherwise false
+     */
+    public function checkIfReviewExists(string $id_user, string $id_product): bool {
+        $idUser = htmlspecialchars($id_user);
+        $idProduct = htmlspecialchars($id_product);
+
+        $q = "SELECT * FROM " . TABLE_REVIEW . " WHERE fk_id_product = :id_product AND fk_id_user = :id_user";
+
+        $stmt = $this->pdo->prepare($q);
+
+        $stmt->bindValue(":id_product", $idProduct);
+        $stmt->bindValue(":id_user", $idUser);
+
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
     }
 
     ////////////////////////////////////////////////////////////////
