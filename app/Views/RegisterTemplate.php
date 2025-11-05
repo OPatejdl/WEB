@@ -11,18 +11,20 @@
 
 <?php
     $view = "
-        <div class='row align-items-center justify-content-center py-5'>
+        <div class='row align-items-center justify-content-center py-5 mt-auto'>
             <!-- Picture -->
-            <div class='col-12 col-md-6 mb-4 mb-md-0 d-flex justify-content-center'>
+            <div class='col-12 col-md-6 d-flex justify-content-center'>
                 <img alt='Přidej se k nám' 
                      src='data/register_pic.png'
-                     class='img-fluid rounded-4 '
-                     style='max-height: 520px;'
+                     class='img-fluid rounded-4'
+                     style='height: auto;
+                            object-fit: cover;
+                            width: 100%;'
                 >
             </div>
             
             <!-- Register form-->
-            <div class='col-12 col-md-5'>
+            <div class='col-12 col-md-6'>
                 <div class='card border-0 shadow rounded-4'>
                     <div class='card-body p-4 p-lg-5'>
                         <h2 class='fw-bold text-center mb-4'>Registrace</h2>

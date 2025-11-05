@@ -66,24 +66,6 @@ class MyDatabase
         return $obj->fetchAll();
     }
 
-    /**
-     * Function used for deleting data from certain table
-     *
-     * @param string $tableName table's name
-     * @param string $whereStatement WHERE statement defining a condition
-     * @return bool returns true if deleted successfully
-     */
-    private function deleteFromTable(string $tableName, string $whereStatement): bool{
-        $q = "DELETE FROM $tableName WHERE $whereStatement";
-        $obj = $this->execQuery($q);
-
-        if($obj == null){
-            return false;
-        }else{
-            return true;
-        }
-    }
-
     ///////////////////////// Specific Functions /////////////////////////
 
     /// USER AND ROLES
@@ -98,6 +80,15 @@ class MyDatabase
 
     public function getAllRoles(): array {
         return $this->selectFromTable(TABLE_ROLE);
+    }
+
+    /**
+     * Function gets all possible categories for product
+     *
+     * @return array products categories
+     */
+    public function getAllCategories(): array {
+        return $this->selectFromTable(TABLE_CATEGORY);
     }
 
     /**
@@ -329,7 +320,7 @@ class MyDatabase
      * @return bool true if user is logged otherwise false
      */
     public function isUserLoggedIn(): bool {
-        return isset($_SESSION[$this->userSessionKey]);
+        return $this->session->isSessionSet($this->userSessionKey);
     }
 
     /**
@@ -369,7 +360,7 @@ class MyDatabase
 
         if ($stmt->rowCount() > 0) {
             $row = $stmt->fetch();
-            $_SESSION[$this->userSessionKey] = $row["id_user"];
+            $this->session->addSession($this->userSessionKey, $row["id_user"]);
             return true;
         } else {
             return false;
@@ -380,7 +371,7 @@ class MyDatabase
      * Function log's out user
      */
     public function logoutUser(): void {
-        unset($_SESSION[$this->userSessionKey]);
+        $this->session->removeSession($this->userSessionKey);
     }
 
     /**
@@ -394,8 +385,7 @@ class MyDatabase
             echo "<script> console.log(`SERVER ERROR: No user logged in`);</script>";
             return null;
         }
-
-        $userId = $_SESSION[$this->userSessionKey];
+        $userId = $this->session->getSession($this->userSessionKey);
         if ($userId == null) {
             echo "<script> console.log(`SERVER ERROR: User's ID in SESSION was null`);</script>";
             $this->logoutUser();
@@ -536,11 +526,34 @@ class MyDatabase
 
         $allPriorities = $this->selectFromTable(TABLE_ROLE);
 
-        foreach ($allPriorities as $priorite) {
-            $priorities[$priorite["name"]] = $priorite["priority"];
+        foreach ($allPriorities as $priority) {
+            $priorities[$priority["name"]] = $priority["priority"];
         }
 
         return $priorities;
+    }
+
+    /**
+     * Function checks if a review of product from the user exists
+     *
+     * @param string $id_user user's id
+     * @param string $id_product product's id
+     * @return bool true if review on certain product from the user exists otherwise false
+     */
+    public function checkIfReviewExists(string $id_user, string $id_product): bool {
+        $idUser = htmlspecialchars($id_user);
+        $idProduct = htmlspecialchars($id_product);
+
+        $q = "SELECT * FROM " . TABLE_REVIEW . " WHERE fk_id_product = :id_product AND fk_id_user = :id_user";
+
+        $stmt = $this->pdo->prepare($q);
+
+        $stmt->bindValue(":id_product", $idProduct);
+        $stmt->bindValue(":id_user", $idUser);
+
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -588,4 +601,150 @@ class MyDatabase
         return false;
     }
 
+    //////////////////////////////////
+    /// New Product
+    ///
+
+    /**
+     * Function checks if category with categoryId exists
+     *
+     * @param string $categoryId category ID
+     * @return bool true if exists otherwise false
+     */
+    public function doesCategoryExist(string $categoryId): bool {
+        $categoryId = htmlspecialchars($categoryId);
+
+        $q = "SELECT name FROM ".TABLE_CATEGORY." WHERE id_category = :category";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":category", $categoryId);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
+    }
+
+    public function addNewProduct($name, $picPath, $price, $category): bool {
+        $name = htmlspecialchars($name);
+        $pic = htmlspecialchars($picPath);
+        $price = htmlspecialchars($price);
+        $category = htmlspecialchars($category);
+
+        $q = "INSERT INTO opatejdl_product (fk_id_category, name, price, photo_url) VALUES
+                                        (:category, :name, :price, :pic)";
+
+        $stmt = $this->pdo->prepare($q);
+
+        $stmt->bindValue(":category", $category);
+        $stmt->bindValue(":name", $name);
+        $stmt->bindValue(":price", $price);
+        $stmt->bindValue(":pic", $pic);
+
+        if ($stmt->execute()) {
+            move_uploaded_file($_FILES["newProduct_pic"]["tmp_name"], $picPath);
+            return true;
+        }
+
+        return false;
+    }
+
+    //////////////////////////////////
+    /// Delete and Edit Product
+    /**
+     * Function checks if product with productId exists
+     *
+     * @param string $productId product ID
+     * @return bool true if exists otherwise false
+     */
+    public function doesProductExist(string $productId): bool {
+        $productId = htmlspecialchars($productId);
+
+        $q = "SELECT * FROM ".TABLE_PRODUCT." WHERE id_product = :product";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":product", $productId);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
+    }
+
+    /**
+     * Function deletes product with productId from DB
+     *
+     * @param string $productId
+     * @return bool
+     */
+    public function deleteProduct(string $productId): bool {
+        $productId = htmlspecialchars($productId);
+
+        $picData = $this->getProductPicById($productId);
+
+        // remove picture
+        if (file_exists($picData["photo_url"])) {
+            if (!unlink($picData["photo_url"])) {
+                return false;
+            }
+        }
+
+        $q = "DELETE FROM ".TABLE_PRODUCT." WHERE id_product = :product";
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":product", $productId);
+
+        return $stmt->execute();
+    }
+
+    /**
+     * Function gets photo_url of product based on its productId
+     *
+     * @param string $idProduct product Id
+     * @return array photo_url in array
+     */
+    public function getProductPicById(string $idProduct): array {
+        $idProduct = htmlspecialchars($idProduct);
+        $q = "SELECT photo_url FROM ".TABLE_PRODUCT." WHERE id_product = :idProduct";
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":idProduct", $idProduct);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
+    /**
+     * Function for product editing
+     *
+     * @param string $idProduct product's id
+     * @param string $name product's name
+     * @param string $picPath path to product's picture
+     * @param string $price product's price
+     * @param string $category product's category
+     * @return bool true if successful otherwise false
+     */
+    public function editProduct(string $idProduct, string $name, string $picPath, string $price, string $category): bool {
+        $idProduct = htmlspecialchars($idProduct);
+        $name = htmlspecialchars($name);
+        $pic = htmlspecialchars($picPath);
+        $price = htmlspecialchars($price);
+        $category = htmlspecialchars($category);
+
+        $q = "UPDATE " . TABLE_PRODUCT . " 
+              SET 
+                fk_id_category = :category,
+                name = :name,
+                price = :price,
+                photo_url = :photo 
+              WHERE id_product = :idProduct";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":category", $category);
+        $stmt->bindValue(":name", $name);
+        $stmt->bindValue(":price", $price);
+        $stmt->bindValue(":photo", $pic);
+        $stmt->bindValue(":idProduct", $idProduct);
+
+
+        if ($stmt->execute()) {
+            move_uploaded_file($_FILES["editProduct_pic"]["tmp_name"], $picPath);
+            return true;
+        }
+
+        return false;
+    }
 }

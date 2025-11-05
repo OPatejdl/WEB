@@ -19,7 +19,9 @@
                 <img alt='Vítej zpět!' 
                      src='data/login_pic.png'
                      class='img-fluid rounded-4 '
-                     style='max-height: 520px;'
+                     style='height: auto;
+                            object-fit: cover;
+                            width: 100%;'
                 >
             </div>
             

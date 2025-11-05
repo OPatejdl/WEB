@@ -12,11 +12,16 @@
     const TABLE_USER = "opatejdl_user";
     const TABLE_ROLE = "opatejdl_role";
     const TABLE_REVIEW = "opatejdl_review";
+    const TABLE_REVIEW_ID = "id_review";
     const TABLE_PRODUCT = "opatejdl_product";
+    const TABLE_PRODUCT_ID = "id_product";
     const TABLE_CATEGORY = "opatejdl_category";
+    const TABLE_CATEGORY_ID = "id__category";
 
     // roles definition
     const ROLE_CONSUMER = "Consumer";
+    const ROLE_MANAGER = "Manager";
+    const PRODUCT_PIC_DIR = "data/img/";
 
 /////// Websites Setup //////
     /** Define root address **/
@@ -98,5 +103,9 @@
     const WEB_MODALS = array(
         "newReview" => array(
             "access_value" => "5"
+        ),
+
+        "newProduct" => array(
+            "access_value" => "10"
         )
     );

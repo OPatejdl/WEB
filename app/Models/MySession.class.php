@@ -17,7 +17,7 @@ class MySession
      * @param $name  attribute's name
      * @param $value attribute's value
      */
-    public function addSession($name, $value) {
+    public function addSession($name, $value): void {
         $_SESSION[$name] = $value;
     }
 
@@ -27,7 +27,7 @@ class MySession
      * @param $name session's name
      * @return mixed|null
      */
-    public function getSession($name) {
+    public function getSession($name): ?string {
         if ($this->isSessionSet($name)) {
             return $_SESSION[$name];
         } else {
@@ -41,7 +41,7 @@ class MySession
      * @param $name session's name
      * @return bool true if session is set otherwise false
      */
-    public function isSessionSet($name) {
+    public function isSessionSet($name): bool {
         return isset($_SESSION[$name]);
     }
 
@@ -50,8 +50,7 @@ class MySession
      *
      * @param $name session's name
      */
-    public function removeSession($name) {
+    public function removeSession($name): void {
         unset($_SESSION[$name]);
     }
 }
-?>
