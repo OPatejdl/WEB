@@ -23,12 +23,13 @@
                 <button type='button' class='btn btn-dark shadow-sm' data-bs-toggle='modal' data-bs-target='#newReview'>
                     <i class='bi bi-pencil-square me-1'></i> Napsat recenzi
                 </button>
-            
+                
+                <!-- Modal for adding review -->
                 <div class='modal fade' id='newReview' tabindex='-1' aria-labelledby='newReviewLabel' aria-hidden='true'>
                     <div class='modal-dialog modal-dialog-centered modal-dialog-scrollable'>
                         <div class='modal-content border-0 shadow-lg'>
                             
-                            <!-- HLAVIČKA -->
+                            
                             <div class='modal-header bg-dark text-white'>
                                 <h5 class='modal-title fw-bold text-center w-100' id='newReviewLabel'>
                                     <i class='bi bi-star-fill text-warning me-2 '></i>Nová recenze
@@ -36,12 +37,12 @@
                                 <button type='button' class='btn-close btn-close-white' data-bs-dismiss='modal' aria-label='Zavřít'></button>
                             </div>
             
-                            <!-- FORMULÁŘ -->
+                            <!-- Add Review Form -->
                             <form action='' method='POST' class='p-2'>
                                 <input type='hidden' name='action' value='newReview'>
                                 <div class='modal-body'>
                                     
-                                    <!-- Produkt -->
+                                    <!-- Product -->
                                     <div class='mb-3'>
                                         <label for='productSelect' class='form-label fw-semibold'>🍽 Produkt</label>
                                         <select class='form-select' id='productSelect' name='newReview_Product' required>
@@ -53,7 +54,7 @@
                                         </select>
                                     </div>
             
-                                    <!-- Hodnocení -->
+                                    <!-- Evaluation -->
                                     <div class='mb-3'>
                                         <label for='ratingSelect' class='form-label fw-semibold'>⭐ Hodnocení</label>
                                         <select class='form-select' id='ratingSelect' name='newReview_Rating' required>
@@ -73,7 +74,7 @@
                                         <div class='form-text'>0 = nejhorší, 5 = nejlepší.</div>
                                     </div>
             
-                                    <!-- Popis -->
+                                    <!-- Description -->
                                     <div class='mb-3'>
                                         <label for='reviewText' class='form-label fw-semibold'>📝 Popis</label>
                                         <textarea class='form-control' id='reviewText' name='newReview_Description' 
@@ -82,7 +83,7 @@
             
                                 </div>
             
-                                <!-- PATIČKA -->
+                                
                                 <div class='modal-footer border-0'>
                                     <button type='button' class='btn btn-outline-secondary' data-bs-dismiss='modal'>
                                         <i class='bi bi-x-circle me-1'></i>Zavřít
@@ -92,6 +93,7 @@
                                     </button>
                                 </div>
                             </form>
+                            
                         </div>
                     </div>
                 </div>
@@ -110,6 +112,7 @@
         if (isset($tplData["reviews"][$product["name"]]) && $tplData["reviews"][$product["name"]] != null) {
             $public_count = 0;
 
+            // Review header - Product Name
             $review_card = "
             <section class='myBox-section card border-0 shadow-sm mb-5 w-100'>
               <div class='card-header bg-light'>
@@ -119,6 +122,7 @@
                 <ul class='list-group list-group-flush'>
             ";
 
+            // Reviews of product
             foreach ($tplData["reviews"][$product["name"]] as $review) {
                 if (!$tplData["isLogged"] || $tplData["user"]["priority"] <= $tplData["priorities"][ROLE_CONSUMER]) {
                     if ($review["publicity"] == 1) {

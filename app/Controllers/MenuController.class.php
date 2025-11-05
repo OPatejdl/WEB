@@ -28,6 +28,7 @@ class MenuController implements IController {
 
         $tplData["products"] = $this->db->getAllProducts();
         $tplData["categories"] = $this->db->getAllCategories();
+        $tplData["priorities"] = $this->db->getAllPriorities();
 
         foreach ($tplData["products"] as $product) {
             $tplData[htmlspecialchars($product["id_product"])."_rating"] =
@@ -64,7 +65,26 @@ class MenuController implements IController {
                     }
                     break;
 
-                case "removeProduct":
+                case "deleteProduct":
+                    if (isset($_POST["del_productId"]) && is_numeric($_POST["del_productId"])) {
+                        if ($this->db->doesProductExist($_POST["del_productId"])) {
+                            $res = $this->db->deleteProduct($_POST["del_productId"]);
+                            if ($res) {
+                                header('Location: ' . $_SERVER['REQUEST_URI']);
+                                exit();
+                            } else {
+                                echo "<script> console.log('Delete Product - Fail on DB') </script>";
+                            }
+                        } else {
+                            echo "<script> console.log('Delete Product - Id not exist') </script>";
+                        }
+
+                    } else {
+                        echo "<script> console.log('Delete Product - Undef ID') </script>";
+                    }
+                    break;
+
+                case "editProduct":
                     break;
 
                 default:

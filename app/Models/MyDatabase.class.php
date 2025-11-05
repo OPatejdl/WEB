@@ -666,4 +666,63 @@ class MyDatabase
         return false;
     }
 
+    //////////////////////////////////
+    /// Delete Product
+    /**
+     * Function checks if product with productId exists
+     *
+     * @param string $productId product ID
+     * @return bool true if exists otherwise false
+     */
+    public function doesProductExist(string $productId): bool {
+        $productId = htmlspecialchars($productId);
+
+        $q = "SELECT * FROM ".TABLE_PRODUCT." WHERE id_product = :product";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":product", $productId);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
+    }
+
+    /**
+     * Function deletes product with productId from DB
+     *
+     * @param string $productId
+     * @return bool
+     */
+    public function deleteProduct(string $productId): bool {
+        $productId = htmlspecialchars($productId);
+
+        $picData = $this->getProductPicById($productId);
+
+        // remove picture
+        if (file_exists($picData["photo_url"])) {
+            if (!unlink($picData["photo_url"])) {
+                return false;
+            }
+        }
+
+        $q = "DELETE FROM ".TABLE_PRODUCT." WHERE id_product = :product";
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":product", $productId);
+
+        return $stmt->execute();
+    }
+
+    /**
+     * Function gets photo_url of product based on its Id
+     *
+     * @param string $idProduct product Id
+     * @return array photo_url in array
+     */
+    public function getProductPicById(string $idProduct): array {
+        $idProduct = htmlspecialchars($idProduct);
+        $q = "SELECT photo_url FROM ".TABLE_PRODUCT." WHERE id_product = :idProduct";
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":idProduct", $idProduct);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
 }

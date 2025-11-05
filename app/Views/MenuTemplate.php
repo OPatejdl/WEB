@@ -2,7 +2,12 @@
     global $tplData;
     require_once("TemplateBasics.class.php");
     $tmplHeaders = new TemplateBasics();
+
+    require_once("ModalsDef.class.php");
+    $modalsDef = new ModalsDef();
 ?>
+
+
 
 <?php
     $tmplHeaders->getHTMLHeader($tplData["title"]);
@@ -23,74 +28,8 @@
                     <i class='bi bi-pencil-square me-1'></i> Přidat produkt
                 </button>
             
-                <div class='modal fade' id='newProduct' tabindex='-1' aria-labelledby='newProductLabel' aria-hidden='true'>
-                    <div class='modal-dialog modal-dialog-centered modal-dialog-scrollable'>
-                        <div class='modal-content border-0 shadow-lg'>
-                        
-                            <!-- HLAVIČKA -->
-                            <div class='modal-header bg-dark text-white'>
-                                <h5 class='modal-title fw-bold text-center w-100' id='newProductLabel'>
-                                    <i class='bi bi-star-fill text-warning me-2 '></i>Nový Produkt
-                                </h5>
-                                <button type='button' class='btn-close btn-close-white' data-bs-dismiss='modal' aria-label='Zavřít'></button>
-                            </div>
-                            
-                            <!-- FORMULÁŘ -->
-                                <form action='' method='POST' enctype='multipart/form-data' class='p-2'>
-                                    <input type='hidden' name='action' value='newProduct'>
-                                    
-                                    <div class='modal-body'>
-                                        <!-- Name -->
-                                        <div class='mb-3'>
-                                            <label for='newProduct_name' class='form-label fw-semibold'>Název produktu 🍽</label>
-                                            <input type='text' class='form-control' id='newProduct_name' 
-                                                name='newProduct_name' placeholder='Zadejte název produktu' required
-                                            >
-                                        </div>
-                                        
-                                        <!-- Picture -->
-                                        <div class='mb-3'>
-                                            <label for='newProduct_pic' class='form-label fw-semibold'>Obrázek 📸</label>
-                                            <input type='file' id='newProduct_pic' class='form-control' name='newProduct_pic' accept='image/png, image/gif, image/jpeg' required>
-                                            <div class='form-text'>Podporované formáty: PNG, GIF, JPG.</div>
-                                        </div>
-                                        
-                                        <!-- Name -->
-                                        <div class='mb-3'>
-                                            <label for='newProduct_price' class='form-label fw-semibold'>Cena 💰</label>
-                                            <input  type='number' min='0' step='0.01' class='form-control' id='newProduct_price' 
-                                                    name='newProduct_price' placeholder='Zadejte cenu v Kč' required
-                                            >
-                                        </div>
-                                        
-                                        <!-- Name -->
-                                        <div class='mb-3'>
-                                            <label for='newProduct_category' class='form-label fw-semibold'>Typ produktu 🏷️</label>
-                                            <select class='form-select' id='newProduct_category' name='newProduct_category' required>
-                                                <option value='' selected disabled>Vyberte typ produktu</option>";
-                                            foreach ($tplData["categories"] as $category) {
-                                                $btn_view .= "<option value='{$category["id_category"]}'>{$category["name"]}</option>";
-                                            }
-            $btn_view .= "
-                                            </select>
-                                        </div>
-                                        
-                                    </div>
-                                                                
-                                    <!-- PATIČKA -->
-                                    <div class='modal-footer border-0'>
-                                        <button type='button' class='btn btn-outline-secondary' data-bs-dismiss='modal'>
-                                            <i class='bi bi-x-circle me-1'></i>Zavřít
-                                        </button>
-                                        <button type='submit' class='btn btn-primary'>
-                                            <i class='bi bi-send-fill me-1'></i>Odeslat recenzi
-                                        </button>
-                                    </div>
-                                </form>
-                        
-                        </div>
-                    </div>
-                </div>
+                {$modalsDef->productModal("newProduct", "newProduct", "Nový Produkt", "Přidat")}
+                
             </div>
             ";
         }
@@ -136,7 +75,28 @@
                     <ul class='list-unstyled text-muted small mb-0'>
                       <li><strong>Cena:</strong> ".$product["price"]." Kč</li>
                       <li><strong>Hodnocení:</strong> ".$stars."</li>
-                    </ul>
+                    </ul>";
+                if ($tplData["isLogged"] && $tplData["user"]["priority"] >= $tplData["priorities"][ROLE_MANAGER]) {
+                    $view .= "
+                    <div class='d-flex gap-2 justify-content-end mt-auto'>
+                        <button type='button' class='btn btn-outline-warning' data-bs-toggle='modal' data-bs-target='#editProduct'>
+                            <i class='bi bi-pencil-square me-1'></i> Upravit produkt
+                        </button>
+                        
+                        <form action='' method='POST' class='m-0 p-0'>
+                            <input type='hidden' name='action' value='deleteProduct'>
+                            <input type='hidden' name='del_productId' value='{$product["id_product"]}'>
+                            <button type='submit' class='btn btn-outline-danger'>
+                                <i class='bi bi-x-circle me-1'></i> Smazat
+                            </button>
+                        </form>
+                        
+                        {$modalsDef->productModal("editProduct", "editProduct", "Uprav Produkt", "Upravit",
+                                                   $product["id_product"], $product["name"], $product["photo_url"], $product["price"], $product["fk_id_category"] )}
+                    </div>                
+                    ";
+                }
+                $view .= "
                   </div>
                 </div>
               </li>

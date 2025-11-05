@@ -177,5 +177,6 @@
 
             return $stars;
         }
+
     }
 ?>
