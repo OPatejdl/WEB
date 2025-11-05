@@ -76,7 +76,8 @@
                                     <!-- Popis -->
                                     <div class='mb-3'>
                                         <label for='reviewText' class='form-label fw-semibold'>📝 Popis</label>
-                                        <textarea class='form-control' id='reviewText' name='newReview_Description' rows='4' placeholder='Jak ti chutnalo? Co bys vyzdvihl?' required></textarea>
+                                        <textarea class='form-control' id='reviewText' name='newReview_Description' 
+                                         rows='4' placeholder='Jak ti chutnalo? Co bys vyzdvihl?' required></textarea>
                                     </div>
             
                                 </div>

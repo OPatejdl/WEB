@@ -17,6 +17,7 @@
 
     // roles definition
     const ROLE_CONSUMER = "Consumer";
+    const PRODUCT_PIC_DIR = "data/img/";
 
 /////// Websites Setup //////
     /** Define root address **/

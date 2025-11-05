@@ -620,4 +620,50 @@ class MyDatabase
         return false;
     }
 
+    //////////////////////////////////
+    /// New Product
+    ///
+
+    /**
+     * Function checks if category with categoryId exists
+     *
+     * @param string $categoryId category ID
+     * @return bool true if exists otherwise false
+     */
+    public function doesCategoryExist(string $categoryId): bool {
+        $categoryId = htmlspecialchars($categoryId);
+
+        $q = "SELECT name FROM ".TABLE_CATEGORY." WHERE id_category = :category";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":category", $categoryId);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
+    }
+
+    public function addNewProduct($name, $picPath, $price, $category): bool {
+        $name = htmlspecialchars($name);
+        $pic = htmlspecialchars($picPath);
+        $price = htmlspecialchars($price);
+        $category = htmlspecialchars($category);
+
+        $q = "INSERT INTO opatejdl_product (fk_id_category, name, price, photo_url) VALUES
+                                        (:category, :name, :price, :pic)";
+
+        $stmt = $this->pdo->prepare($q);
+
+        $stmt->bindValue(":category", $category);
+        $stmt->bindValue(":name", $name);
+        $stmt->bindValue(":price", $price);
+        $stmt->bindValue(":pic", $pic);
+
+        if ($stmt->execute()) {
+            move_uploaded_file($_FILES["newProduct_pic"]["tmp_name"], $picPath);
+            return true;
+        }
+
+        return false;
+    }
+
 }

@@ -34,6 +34,44 @@ class MenuController implements IController {
                 $this->db->getAvgRating($product["id_product"]);
         }
 
+        if (isset($_POST["action"])) {
+            switch ($_POST["action"]) {
+                case "newProduct":
+                    if (isset($_POST["newProduct_name"]) && isset($_FILES["newProduct_pic"])
+                    && isset($_POST["newProduct_price"]) && isset($_POST["newProduct_category"])) {
+                        $newName = $_POST["newProduct_name"];
+                        $newPic = basename($_FILES["newProduct_pic"]["name"]);
+                        $newPrice = $_POST["newProduct_price"];
+                        $newCategory = $_POST["newProduct_category"];
+
+                        if ($this->db->doesCategoryExist($newCategory)) {
+                            if ($newName != "" && $newPic != "" && $newPrice != "") {
+                                $photo = date("YmdHis").$tplData["user"]["username"]."-";
+                                $target_file = PRODUCT_PIC_DIR . $photo . $newPic;
+                                $res = $this->db->addNewProduct($newName, $target_file, $newPrice, $newCategory);
+                                if ($res) {
+                                    header('Location: ' . $_SERVER['REQUEST_URI']);
+                                    exit();
+                                } else {
+                                    echo "<script> console.log('New Product - Fail on DB') </script>";
+                                }
+                            } else {
+                                echo "<script> console.log('New Product - Some of the input is null') </script>";
+                            }
+                        } else {
+                            echo "<script> console.log('New Product - Unknown category Id') </script>";
+                        }
+                    }
+                    break;
+
+                case "removeProduct":
+                    break;
+
+                default:
+                    echo "<script> console.log('Menu page - Unknown action') </script>";
+            }
+        }
+
         ob_start();
 
         require(DIRECTORY_VIEW . "/MenuTemplate.php");
