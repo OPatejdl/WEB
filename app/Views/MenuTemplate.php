@@ -28,7 +28,7 @@
                     <i class='bi bi-pencil-square me-1'></i> Přidat produkt
                 </button>
             
-                {$modalsDef->productModal("newProduct", "newProduct", "Nový Produkt", "Přidat")}
+                {$modalsDef->productModal("newProduct", "newProduct", "Nový Produkt", "Přidat", true)}
                 
             </div>
             ";
@@ -79,7 +79,7 @@
                 if ($tplData["isLogged"] && $tplData["user"]["priority"] >= $tplData["priorities"][ROLE_MANAGER]) {
                     $view .= "
                     <div class='d-flex gap-2 justify-content-end mt-auto'>
-                        <button type='button' class='btn btn-outline-warning' data-bs-toggle='modal' data-bs-target='#editProduct'>
+                        <button type='button' class='btn btn-outline-warning' data-bs-toggle='modal' data-bs-target='#editProduct{$product["id_product"]}'>
                             <i class='bi bi-pencil-square me-1'></i> Upravit produkt
                         </button>
                         
@@ -91,7 +91,7 @@
                             </button>
                         </form>
                         
-                        {$modalsDef->productModal("editProduct", "editProduct", "Uprav Produkt", "Upravit",
+                        {$modalsDef->productModal("editProduct{$product['id_product']}", "editProduct", "Uprav Produkt", "Upravit", false,
                                                    $product["id_product"], $product["name"], $product["photo_url"], $product["price"], $product["fk_id_category"] )}
                     </div>                
                     ";

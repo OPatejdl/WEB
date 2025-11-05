@@ -85,6 +85,46 @@ class MenuController implements IController {
                     break;
 
                 case "editProduct":
+                    if (isset($_POST["editProduct_name"]) && isset($_POST["editProduct_price"])
+                        && isset($_POST["editProduct_category"]) && isset($_POST["productId"])) {
+                        // Set data
+                        $editName = $_POST["editProduct_name"];
+                        $editPrice = $_POST["editProduct_price"];
+                        $editCategory = $_POST["editProduct_category"];
+                        $picData = $this->db->getProductPicById($_POST["productId"]);
+                        $current_pic_path = $picData["photo_url"];
+
+                        if ($this->db->doesCategoryExist($editCategory)) {
+                            if ($editName != "" && $editPrice != "") {
+
+                                // set target_file
+                                if ($_FILES["editProduct_pic"]["name"] != "") {
+                                    if (file_exists($current_pic_path)) {
+                                        unlink($current_pic_path);
+                                    }
+                                    $editPic = basename($_FILES["editProduct_pic"]["name"]);
+                                    $photo = date("YmdHis").$tplData["user"]["username"]."-";
+                                    $target_file = PRODUCT_PIC_DIR . $photo . $editPic;
+                                } else {
+                                    $target_file = $current_pic_path;
+                                }
+
+                                $res = $this->db->editProduct($_POST["productId"], $editName, $target_file, $editPrice, $editCategory);
+                                if ($res) {
+                                    header('Location: ' . $_SERVER['REQUEST_URI']);
+                                    exit();
+                                } else {
+                                    echo "<script> console.log('Edit Product - Fail on DB') </script>";
+                                }
+                            } else {
+                                echo "<script> console.log('Edit Product - Some of the input is null') </script>";
+                            }
+                        } else {
+                            echo "<script> console.log('Edit Product - Unknown category Id') </script>";
+                        }
+                    } else {
+                        echo "<script> console.log('Edit Product - Undef Value') </script>";
+                    }
                     break;
 
                 default:
@@ -99,4 +139,3 @@ class MenuController implements IController {
         return ob_get_clean();
     }
 }
-?>

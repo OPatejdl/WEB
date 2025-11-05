@@ -66,24 +66,6 @@ class MyDatabase
         return $obj->fetchAll();
     }
 
-    /**
-     * Function used for deleting data from certain table
-     *
-     * @param string $tableName table's name
-     * @param string $whereStatement WHERE statement defining a condition
-     * @return bool returns true if deleted successfully
-     */
-    private function deleteFromTable(string $tableName, string $whereStatement): bool{
-        $q = "DELETE FROM $tableName WHERE $whereStatement";
-        $obj = $this->execQuery($q);
-
-        if($obj == null){
-            return false;
-        }else{
-            return true;
-        }
-    }
-
     ///////////////////////// Specific Functions /////////////////////////
 
     /// USER AND ROLES
@@ -338,7 +320,7 @@ class MyDatabase
      * @return bool true if user is logged otherwise false
      */
     public function isUserLoggedIn(): bool {
-        return isset($_SESSION[$this->userSessionKey]);
+        return $this->session->isSessionSet($this->userSessionKey);
     }
 
     /**
@@ -378,7 +360,7 @@ class MyDatabase
 
         if ($stmt->rowCount() > 0) {
             $row = $stmt->fetch();
-            $_SESSION[$this->userSessionKey] = $row["id_user"];
+            $this->session->addSession($this->userSessionKey, $row["id_user"]);
             return true;
         } else {
             return false;
@@ -389,7 +371,7 @@ class MyDatabase
      * Function log's out user
      */
     public function logoutUser(): void {
-        unset($_SESSION[$this->userSessionKey]);
+        $this->session->removeSession($this->userSessionKey);
     }
 
     /**
@@ -403,8 +385,7 @@ class MyDatabase
             echo "<script> console.log(`SERVER ERROR: No user logged in`);</script>";
             return null;
         }
-
-        $userId = $_SESSION[$this->userSessionKey];
+        $userId = $this->session->getSession($this->userSessionKey);
         if ($userId == null) {
             echo "<script> console.log(`SERVER ERROR: User's ID in SESSION was null`);</script>";
             $this->logoutUser();
@@ -667,7 +648,7 @@ class MyDatabase
     }
 
     //////////////////////////////////
-    /// Delete Product
+    /// Delete and Edit Product
     /**
      * Function checks if product with productId exists
      *
@@ -712,7 +693,7 @@ class MyDatabase
     }
 
     /**
-     * Function gets photo_url of product based on its Id
+     * Function gets photo_url of product based on its productId
      *
      * @param string $idProduct product Id
      * @return array photo_url in array
@@ -724,5 +705,46 @@ class MyDatabase
         $stmt->bindValue(":idProduct", $idProduct);
         $stmt->execute();
         return $stmt->fetch();
+    }
+
+    /**
+     * Function for product editing
+     *
+     * @param string $idProduct product's id
+     * @param string $name product's name
+     * @param string $picPath path to product's picture
+     * @param string $price product's price
+     * @param string $category product's category
+     * @return bool true if successful otherwise false
+     */
+    public function editProduct(string $idProduct, string $name, string $picPath, string $price, string $category): bool {
+        $idProduct = htmlspecialchars($idProduct);
+        $name = htmlspecialchars($name);
+        $pic = htmlspecialchars($picPath);
+        $price = htmlspecialchars($price);
+        $category = htmlspecialchars($category);
+
+        $q = "UPDATE " . TABLE_PRODUCT . " 
+              SET 
+                fk_id_category = :category,
+                name = :name,
+                price = :price,
+                photo_url = :photo 
+              WHERE id_product = :idProduct";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":category", $category);
+        $stmt->bindValue(":name", $name);
+        $stmt->bindValue(":price", $price);
+        $stmt->bindValue(":photo", $pic);
+        $stmt->bindValue(":idProduct", $idProduct);
+
+
+        if ($stmt->execute()) {
+            move_uploaded_file($_FILES["editProduct_pic"]["tmp_name"], $picPath);
+            return true;
+        }
+
+        return false;
     }
 }

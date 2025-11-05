@@ -2,10 +2,11 @@
 
 class ModalsDef
 {
-    public function productModal(string $Id, string $actionType, string $label, $btnLabel,
+    public function productModal(string $Id, string $actionType, string $label, $btnLabel, bool $isRequired,
                                  string $productId="",string $nameVal="", string $picVal="",
                                  string $priceVal="", string $categoryId=""): string {
         global $tplData;
+        $required = $isRequired ? "required" : "";
         $modal_view = "
             <div class='modal fade' id='$Id' tabindex='-1' aria-labelledby='{$Id}Label' aria-hidden='true'>
                     <div class='modal-dialog modal-dialog-centered modal-dialog-scrollable'>
@@ -29,15 +30,14 @@ class ModalsDef
                                         <div class='mb-3'>
                                             <label for='{$actionType}_name' class='form-label fw-semibold'>Název produktu 🍽</label>
                                             <input type='text' class='form-control' id='{$actionType}_name' 
-                                                name='{$actionType}_name' placeholder='Zadejte název produktu' value='$nameVal' required
-                                            >
+                                                name='{$actionType}_name' placeholder='Zadejte název produktu' value='$nameVal' required>                                            
                                         </div>
                                         
                                         <!-- Picture -->
                                         <div class='mb-3'>
                                             <label for='{$actionType}_pic' class='form-label fw-semibold'>Obrázek 📸</label>
                                             <input type='file' id='{$actionType}_pic' class='form-control' name='{$actionType}_pic'
-                                                    accept='image/png, image/gif, image/jpeg' required>
+                                                    accept='image/png, image/gif, image/jpeg' $required>
                                             <div class='form-text'>Podporované formáty: PNG, GIF, JPG.</div>
                                         </div>";
         if ($picVal != "") {
