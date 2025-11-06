@@ -156,7 +156,7 @@
             <?php
         }
 
-        public function setRatingSyle(float $rating): string {
+        public function setRatingStyle(float $rating): string {
             $stars = "";
 
             if ($rating == null) {
@@ -177,6 +177,5 @@
 
             return $stars;
         }
-
     }
 ?>

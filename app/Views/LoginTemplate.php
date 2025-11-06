@@ -111,7 +111,7 @@
                 ";
 
                 foreach ($productReviews as $productReview) {
-                    $stars = $tmplHeaders->setRatingSyle($productReview["rating"]);
+                    $stars = $tmplHeaders->setRatingStyle($productReview["rating"]);
                     $view .= "
                     <li class='list-group-item'>
                         <div class='col'>

@@ -8,12 +8,17 @@ class LoginController implements IController
     /** @var MyDatabase $db Var for database handling **/
     private MyDatabase $db;
 
+    private Common $commonFunc;
+
     /**
      * Login class constructor
      */
     public function __construct() {
         require_once(DIRECTORY_MODELS . "/MyDatabase.class.php");
         $this->db = new MyDatabase();
+
+        require_once(DIRECTORY_CONTROLLERS . "/Common.class.php");
+        $this->commonFunc = new Common($this->db);
     }
 
     /**
@@ -50,34 +55,20 @@ class LoginController implements IController
                     break;
 
                 case "deleteReview":
-                    if (isset($_POST["del_reviewId"]) && is_numeric($_POST["del_reviewId"])) {
-                        if ($this->db->doesReviewExist($_POST["del_reviewId"])) {
-                            $res = $this->db->deleteReview($_POST["del_reviewId"]);
-                            if ($res) {
-                                header('Location: ' . $_SERVER['REQUEST_URI']);
-                                exit();
-                            } else {
-                                echo "<script> console.log('Delete Review - Fail on DB') </script>";
-                            }
-                        } else {
-                            echo "<script> console.log('Delete Review - Id not exist') </script>";
-                        }
-
-                    } else {
-                        echo "<script> console.log('Delete Review - Undef ID') </script>";
-                    }
+                    $this->commonFunc->deleteReview();
                     break;
 
                 case "editReview":
                     if (isset($_POST["reviewId"]) && isset($_POST["editReview_Rating"])
                         && isset($_POST["editReview_Description"])) {
 
+                        $reviewId = $_POST["reviewId"];
                         $newDes = $_POST["editReview_Description"];
                         $newRating = $_POST["editReview_Rating"];
-                        $reviewId = $_POST["reviewId"];
+
                         if ($newDes != "" && $newRating != "" && is_numeric($newRating)
                             && $reviewId != "" && is_numeric($reviewId)) {
-                            $res = $this->db->editReview( $reviewId ,$newDes, $newRating);
+                            $res = $this->db->editReview($reviewId, $newDes, $newRating);
                             if ($res) {
                                 header('Location: ' . $_SERVER['REQUEST_URI']);
                                 exit();

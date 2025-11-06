@@ -5,12 +5,17 @@ class ReviewsController implements IController
     /** @var MyDatabase $db Var for database handling **/
     private MyDatabase $db;
 
+    private Common $commonFunc;
+
     /**
-     * Reviews class constructore
+     * Login class constructor
      */
     public function __construct() {
         require_once(DIRECTORY_MODELS . "/MyDatabase.class.php");
         $this->db = new MyDatabase();
+
+        require_once(DIRECTORY_CONTROLLERS . "/Common.class.php");
+        $this->commonFunc = new Common($this->db);
     }
 
     public function show(string $pageTitle): string
@@ -87,6 +92,10 @@ class ReviewsController implements IController
                     echo "<script> console.log('Publicity of Review - Review does not exist') </script>";
                 }
             }
+            elseif ($_POST["action"] == "deleteReview") {
+                $this->commonFunc->deleteReview();
+            }
+
             else {
                 echo "<script> console.log('Review Page - No data!') </script>";
             }

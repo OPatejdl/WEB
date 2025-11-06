@@ -55,7 +55,7 @@
             foreach ($category[1] as $product) {
                 // Rating
                 $rating = floatval($tplData[htmlspecialchars($product["id_product"])."_rating"]);
-                $stars = $tmplHeaders->setRatingSyle($rating);
+                $stars = $tmplHeaders->setRatingStyle($rating);
 
                 // Product View
                 $view .= "

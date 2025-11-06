@@ -54,7 +54,7 @@
             foreach ($tplData["reviews"][$product["name"]] as $review) {
                 if (!$tplData["isLogged"] || $tplData["user"]["priority"] <= $tplData["priorities"][ROLE_CONSUMER]) {
                     if ($review["publicity"] == 1) {
-                        $stars = $tmplHeaders->setRatingSyle($review["rating"]);
+                        $stars = $tmplHeaders->setRatingStyle($review["rating"]);
                         $review_card .= "
                         <li class='list-group-item'>
                             <div class='d-flex flex-column'>
@@ -70,7 +70,7 @@
                     }
                 } else {
                     $public_count++;
-                    $stars = $tmplHeaders->setRatingSyle($review["rating"]);
+                    $stars = $tmplHeaders->setRatingStyle($review["rating"]);
                     $review_card .= "
                         <li class='list-group-item'>
                             <div class='col'>
@@ -78,26 +78,56 @@
                                 <ul class='list-unstyled text-muted small mb-0'>
                                   <li> <i>" . $review["description"] . "</i></li>
                                   <li><strong>Hodnocení:</strong>" . $stars . "</li>
-                                </ul>
-                                
-                                <form action='' method='POST' class='text-end mt-auto'>
+                                </ul>";
+
+                    if ($tplData["user"]["priority"] >= $tplData["priorities"][ROLE_ADMIN]) {
+                        $review_card .= "
+                            <div class='d-flex gap-2 justify-content-end '>
+                                <form action='' method='POST' class='m-0 p-0'>
+                                    <input type='hidden' name='action' value='deleteReview'>
+                                    <input type='hidden' name='del_reviewId' value='{$review["id_review"]}'>
+                                    <button type='submit' class='btn btn-outline-danger'>
+                                        <i class='bi bi-x-circle me-1'></i> Odstranit
+                                    </button>
+                                </form>
+                            ";
+                    }
+
+                    $review_card .= "
+                                <form action='' method='POST' >
                                     <input type='hidden' name='action' value='changePublicity'>
                                     <input type='hidden' name='public_current_publicity' value='{$review["publicity"]}'>
                                     <input type='hidden' name='public_Review_id' value='{$review["id_review"]}'>";
+
+
                     if ($review["publicity"] == 1) {
-                        $review_card .= "<button type='submit' class='btn btn-outline-primary btn-sm'>
+                        $review_card .= "
+                                    <button type='submit' class='btn btn-outline-primary'>
                                         <i class='bi bi-eye me-1'></i> Skrýt
                                     </button>";
                     } else {
-                        $review_card .= "<button type='submit' class='btn btn-outline-success btn-sm'>
+                        $review_card .= "
+                                    <button type='submit' class='btn btn-outline-success'>
                                         <i class='bi bi-eye me-1'></i> Zveřejnit
                                     </button>";
                     }
-                    $review_card .= "
+
+                    if ($tplData["user"]["priority"] >= $tplData["priorities"][ROLE_ADMIN]) {
+                        $review_card .= "
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    ";
+                    } else {
+                        $review_card .= "
                                 </form>
                             </div>
                         </li>
                     ";
+                    }
+
+
                 }
             }
 
