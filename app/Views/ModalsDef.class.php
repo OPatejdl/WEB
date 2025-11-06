@@ -2,7 +2,22 @@
 
 class ModalsDef
 {
-    public function productModal(string $Id, string $actionType, string $label, $btnLabel, bool $isRequired,
+    /**
+     * Function gets modals template for creating or editing product
+     *
+     * @param string $Id modal's Id
+     * @param string $actionType type of the action
+     * @param string $label label for inputs
+     * @param string $btnLabel label for button
+     * @param bool $isRequired sets if picture is required or not
+     * @param string $productId id of product (editing)
+     * @param string $nameVal name of the product (editing)
+     * @param string $picVal path to product's picture (editing)
+     * @param string $priceVal product's value (editing)
+     * @param string $categoryId category of product
+     * @return string template of modal
+     */
+    public function productModal(string $Id, string $actionType, string $label, string $btnLabel, bool $isRequired,
                                  string $productId="",string $nameVal="", string $picVal="",
                                  string $priceVal="", string $categoryId=""): string {
         global $tplData;
@@ -100,5 +115,88 @@ class ModalsDef
         ";
 
         return $modal_view;
+    }
+
+    public function reviewModal(string $Id, string $actionType, string $label, string $btnLabel): string {
+        global $tplData;
+
+        $reviewModal = "<!-- Modal for adding review -->
+                <div class='modal fade' id='$Id' tabindex='-1' aria-labelledby='{$Id}Label' aria-hidden='true'>
+                    <div class='modal-dialog modal-dialog-centered modal-dialog-scrollable'>
+                        <div class='modal-content border-0 shadow-lg'>
+                            
+                            
+                            <div class='modal-header bg-dark text-white'>
+                                <h5 class='modal-title fw-bold text-center w-100' id='{$actionType}Label'>
+                                    <i class='bi bi-star-fill text-warning me-2 '></i>$label
+                                </h5>
+                                <button type='button' class='btn-close btn-close-white' data-bs-dismiss='modal' aria-label='Zavřít'></button>
+                            </div>
+            
+                            <!-- Add Review Form -->
+                            <form action='' method='POST' class='p-2'>
+                                <input type='hidden' name='action' value='$actionType'>
+                                <div class='modal-body'>
+                                    
+                                    <!-- Product -->
+                                    <div class='mb-3'>
+                                        <label for='productSelect' class='form-label fw-semibold'>🍽 Produkt</label>
+                                        <select class='form-select' id='productSelect' name='{$actionType}_Product' required>
+                                            <option value='' selected disabled>Vyberte položku…</option>";
+        foreach ($tplData["products"] as $product) {
+            $reviewModal .= "<option value='{$product["id_product"]}'>{$product["name"]}</option>";
+        }
+
+        $reviewModal .= "
+                                        </select>
+                                    </div>
+            
+                                    <!-- Evaluation -->
+                                    <div class='mb-3'>
+                                        <label for='ratingSelect' class='form-label fw-semibold'>⭐ Hodnocení</label>
+                                        <select class='form-select' id='ratingSelect' name='{$actionType}_Rating' required>
+                                            <option value='' selected disabled>Vyberte hodnocení…</option>
+                                            <option value='0'>0.0</option>
+                                            <option value='0.5'>0.5</option>
+                                            <option value='1'>1.0</option>
+                                            <option value='1.5'>1.5</option>
+                                            <option value='2'>2.0</option>
+                                            <option value='2.5'>2.5</option>
+                                            <option value='3'>3.0</option>
+                                            <option value='3.5'>3.5</option>
+                                            <option value='4'>4.0</option>
+                                            <option value='4.5'>4.5</option>
+                                            <option value='5'>5.0</option>
+                                        </select>
+                                        <div class='form-text'>0 = nejhorší, 5 = nejlepší.</div>
+                                    </div>
+            
+                                    <!-- Description -->
+                                    <div class='mb-3'>
+                                        <label for='reviewText' class='form-label fw-semibold'>📝 Popis</label>
+                                        <textarea class='form-control' id='reviewText' name='{$actionType}_Description' 
+                                         rows='4' placeholder='Jak ti chutnalo? Co bys vyzdvihl?' required></textarea>
+                                    </div>
+            
+                                </div>
+            
+                                
+                                <div class='modal-footer border-0'>
+                                    <button type='button' class='btn btn-outline-secondary' data-bs-dismiss='modal'>
+                                        <i class='bi bi-x-circle me-1'></i>Zavřít
+                                    </button>
+                                    <button type='submit' class='btn btn-primary'>
+                                        <i class='bi bi-send-fill me-1'></i>$btnLabel
+                                    </button>
+                                </div>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ";
+
+        return $reviewModal;
     }
 }
