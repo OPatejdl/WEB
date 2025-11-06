@@ -3,6 +3,9 @@
 
     require_once("TemplateBasics.class.php");
     $tmplHeaders = new TemplateBasics();
+
+    require_once("ModalsDef.class.php");
+    $modalsDef = new ModalsDef();
 ?>
 
 <?php
@@ -22,83 +25,8 @@
             <div class='col-auto'> 
                 <button type='button' class='btn btn-dark shadow-sm' data-bs-toggle='modal' data-bs-target='#newReview'>
                     <i class='bi bi-pencil-square me-1'></i> Napsat recenzi
-                </button>
-                
-                <!-- Modal for adding review -->
-                <div class='modal fade' id='newReview' tabindex='-1' aria-labelledby='newReviewLabel' aria-hidden='true'>
-                    <div class='modal-dialog modal-dialog-centered modal-dialog-scrollable'>
-                        <div class='modal-content border-0 shadow-lg'>
-                            
-                            
-                            <div class='modal-header bg-dark text-white'>
-                                <h5 class='modal-title fw-bold text-center w-100' id='newReviewLabel'>
-                                    <i class='bi bi-star-fill text-warning me-2 '></i>Nová recenze
-                                </h5>
-                                <button type='button' class='btn-close btn-close-white' data-bs-dismiss='modal' aria-label='Zavřít'></button>
-                            </div>
-            
-                            <!-- Add Review Form -->
-                            <form action='' method='POST' class='p-2'>
-                                <input type='hidden' name='action' value='newReview'>
-                                <div class='modal-body'>
-                                    
-                                    <!-- Product -->
-                                    <div class='mb-3'>
-                                        <label for='productSelect' class='form-label fw-semibold'>🍽 Produkt</label>
-                                        <select class='form-select' id='productSelect' name='newReview_Product' required>
-                                            <option value='' selected disabled>Vyberte položku…</option>";
-            foreach ($tplData["products"] as $product) {
-                $btn_view .= "<option value='{$product["id_product"]}'>{$product["name"]}</option>";
-            }
-            $btn_view .= "
-                                        </select>
-                                    </div>
-            
-                                    <!-- Evaluation -->
-                                    <div class='mb-3'>
-                                        <label for='ratingSelect' class='form-label fw-semibold'>⭐ Hodnocení</label>
-                                        <select class='form-select' id='ratingSelect' name='newReview_Rating' required>
-                                            <option value='' selected disabled>Vyberte hodnocení…</option>
-                                            <option value='0'>0.0</option>
-                                            <option value='0.5'>0.5</option>
-                                            <option value='1'>1.0</option>
-                                            <option value='1.5'>1.5</option>
-                                            <option value='2'>2.0</option>
-                                            <option value='2.5'>2.5</option>
-                                            <option value='3'>3.0</option>
-                                            <option value='3.5'>3.5</option>
-                                            <option value='4'>4.0</option>
-                                            <option value='4.5'>4.5</option>
-                                            <option value='5'>5.0</option>
-                                        </select>
-                                        <div class='form-text'>0 = nejhorší, 5 = nejlepší.</div>
-                                    </div>
-            
-                                    <!-- Description -->
-                                    <div class='mb-3'>
-                                        <label for='reviewText' class='form-label fw-semibold'>📝 Popis</label>
-                                        <textarea class='form-control' id='reviewText' name='newReview_Description' 
-                                         rows='4' placeholder='Jak ti chutnalo? Co bys vyzdvihl?' required></textarea>
-                                    </div>
-            
-                                </div>
-            
-                                
-                                <div class='modal-footer border-0'>
-                                    <button type='button' class='btn btn-outline-secondary' data-bs-dismiss='modal'>
-                                        <i class='bi bi-x-circle me-1'></i>Zavřít
-                                    </button>
-                                    <button type='submit' class='btn btn-primary'>
-                                        <i class='bi bi-send-fill me-1'></i>Odeslat recenzi
-                                    </button>
-                                </div>
-                            </form>
-                            
-                        </div>
-                    </div>
-                </div>
-            </div>
-            ";
+                </button>";
+            $btn_view .= $modalsDef->reviewModal("newReview", "newReview", "Nová recenze", "Přidat recenzi");
         }
         echo $btn_view;
     ?>
@@ -126,7 +54,7 @@
             foreach ($tplData["reviews"][$product["name"]] as $review) {
                 if (!$tplData["isLogged"] || $tplData["user"]["priority"] <= $tplData["priorities"][ROLE_CONSUMER]) {
                     if ($review["publicity"] == 1) {
-                        $stars = $tmplHeaders->setRatingSyle($review["rating"]);
+                        $stars = $tmplHeaders->setRatingStyle($review["rating"]);
                         $review_card .= "
                         <li class='list-group-item'>
                             <div class='d-flex flex-column'>
@@ -142,7 +70,7 @@
                     }
                 } else {
                     $public_count++;
-                    $stars = $tmplHeaders->setRatingSyle($review["rating"]);
+                    $stars = $tmplHeaders->setRatingStyle($review["rating"]);
                     $review_card .= "
                         <li class='list-group-item'>
                             <div class='col'>
@@ -150,26 +78,56 @@
                                 <ul class='list-unstyled text-muted small mb-0'>
                                   <li> <i>" . $review["description"] . "</i></li>
                                   <li><strong>Hodnocení:</strong>" . $stars . "</li>
-                                </ul>
-                                
-                                <form action='' method='POST' class='text-end mt-auto'>
+                                </ul>";
+
+                    if ($tplData["user"]["priority"] >= $tplData["priorities"][ROLE_ADMIN]) {
+                        $review_card .= "
+                            <div class='d-flex gap-2 justify-content-end '>
+                                <form action='' method='POST' class='m-0 p-0'>
+                                    <input type='hidden' name='action' value='deleteReview'>
+                                    <input type='hidden' name='del_reviewId' value='{$review["id_review"]}'>
+                                    <button type='submit' class='btn btn-outline-danger'>
+                                        <i class='bi bi-x-circle me-1'></i> Odstranit
+                                    </button>
+                                </form>
+                            ";
+                    }
+
+                    $review_card .= "
+                                <form action='' method='POST' >
                                     <input type='hidden' name='action' value='changePublicity'>
                                     <input type='hidden' name='public_current_publicity' value='{$review["publicity"]}'>
                                     <input type='hidden' name='public_Review_id' value='{$review["id_review"]}'>";
+
+
                     if ($review["publicity"] == 1) {
-                        $review_card .= "<button type='submit' class='btn btn-outline-primary btn-sm'>
+                        $review_card .= "
+                                    <button type='submit' class='btn btn-outline-primary'>
                                         <i class='bi bi-eye me-1'></i> Skrýt
                                     </button>";
                     } else {
-                        $review_card .= "<button type='submit' class='btn btn-outline-success btn-sm'>
+                        $review_card .= "
+                                    <button type='submit' class='btn btn-outline-success'>
                                         <i class='bi bi-eye me-1'></i> Zveřejnit
                                     </button>";
                     }
-                    $review_card .= "
+
+                    if ($tplData["user"]["priority"] >= $tplData["priorities"][ROLE_ADMIN]) {
+                        $review_card .= "
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    ";
+                    } else {
+                        $review_card .= "
                                 </form>
                             </div>
                         </li>
                     ";
+                    }
+
+
                 }
             }
 

@@ -3,6 +3,9 @@
 
     require_once("TemplateBasics.class.php");
     $tmplHeaders = new TemplateBasics();
+
+    require_once("ModalsDef.class.php");
+    $modalsDef = new ModalsDef();
 ?>
 
 <?php
@@ -108,7 +111,7 @@
                 ";
 
                 foreach ($productReviews as $productReview) {
-                    $stars = $tmplHeaders->setRatingSyle($productReview["rating"]);
+                    $stars = $tmplHeaders->setRatingStyle($productReview["rating"]);
                     $view .= "
                     <li class='list-group-item'>
                         <div class='col'>
@@ -116,11 +119,27 @@
                               <li> <i>" . $productReview["description"] . "</i></li>
                               <li><strong>Hodnocení:</strong>" . $stars . "</li>
                             </ul>
+                           <div class='d-flex gap-2 justify-content-end '>
+                            <button type='button' class='btn btn-outline-warning' data-bs-toggle='modal' data-bs-target='#editReview{$productReview["id_review"]}'>
+                                <i class='bi bi-pencil-square me-1'></i> Upravit recenzi
+                            </button>
+                        
+                            <form action='' method='POST' class='m-0 p-0'>
+                                <input type='hidden' name='action' value='deleteReview'>
+                                <input type='hidden' name='del_reviewId' value='{$productReview["id_review"]}'>
+                                <button type='submit' class='btn btn-outline-danger'>
+                                    <i class='bi bi-x-circle me-1'></i> Smazat
+                                </button>
+                            </form>
+                        
+                            {$modalsDef->reviewModal("editReview{$productReview["id_review"]}", "editReview", "Upravit recenzi", "Upravit recenzi",
+                                                    $productReview["id_review"], $productReview["fk_id_product"], $productReview["rating"], $productReview["description"]) }
+                        </div>
                     </li>
                     ";
                 }
                 $view .= "
-                    </ul>
+                    </ul>                    
                   </div>
                 </section>";
             }
