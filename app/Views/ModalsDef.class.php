@@ -117,7 +117,8 @@ class ModalsDef
         return $modal_view;
     }
 
-    public function reviewModal(string $Id, string $actionType, string $label, string $btnLabel): string {
+    public function reviewModal(string $Id, string $actionType, string $label, string $btnLabel,
+                                string $reviewId="", string $productId="", $evaluation="", string $descriptionVal=""): string {
         global $tplData;
 
         $reviewModal = "<!-- Modal for adding review -->
@@ -136,25 +137,37 @@ class ModalsDef
                             <!-- Add Review Form -->
                             <form action='' method='POST' class='p-2'>
                                 <input type='hidden' name='action' value='$actionType'>
+                                <input type='hidden' name='productId' value='$reviewId'>
                                 <div class='modal-body'>
                                     
                                     <!-- Product -->
                                     <div class='mb-3'>
                                         <label for='productSelect' class='form-label fw-semibold'>🍽 Produkt</label>
                                         <select class='form-select' id='productSelect' name='{$actionType}_Product' required>
-                                            <option value='' selected disabled>Vyberte položku…</option>";
-        foreach ($tplData["products"] as $product) {
-            $reviewModal .= "<option value='{$product["id_product"]}'>{$product["name"]}</option>";
+                                            ";
+        if ($productId == "") {
+            $reviewModal .= "<option value='' selected disabled>Vyberte položku…</option>";
+            foreach ($tplData["products"] as $product) {
+                $reviewModal .= "<option value='{$product["id_product"]}'>{$product["name"]}</option>";
+            }
+        } else {
+            foreach ($tplData["products"] as $product) {
+                if ($product["id_product"] == $productId) {
+                    $reviewModal .= "<option value='{$product["id_product"]}' selected disabled>{$product["name"]}</option>";
+                }
+            }
         }
+
 
         $reviewModal .= "
                                         </select>
                                     </div>
-            
                                     <!-- Evaluation -->
                                     <div class='mb-3'>
                                         <label for='ratingSelect' class='form-label fw-semibold'>⭐ Hodnocení</label>
-                                        <select class='form-select' id='ratingSelect' name='{$actionType}_Rating' required>
+                                        <select class='form-select' id='ratingSelect' name='{$actionType}_Rating' required>";
+        if ($productId == "") {
+            $reviewModal .=       "
                                             <option value='' selected disabled>Vyberte hodnocení…</option>
                                             <option value='0'>0.0</option>
                                             <option value='0.5'>0.5</option>
@@ -167,15 +180,24 @@ class ModalsDef
                                             <option value='4'>4.0</option>
                                             <option value='4.5'>4.5</option>
                                             <option value='5'>5.0</option>
-                                        </select>
-                                        <div class='form-text'>0 = nejhorší, 5 = nejlepší.</div>
+                                        </select>";
+        } else {
+            for ($val = 0; $val <= 5; $val+=0.5) {
+                if (floatval($evaluation) == $val) {
+                    $reviewModal .= "<option value='$val' selected>$val</option>";
+                } else {
+                    $reviewModal .= "<option value='$val'>$val</option>";
+                }
+            }
+        }
+        $reviewModal .=    " <div class='form-text'>0 = nejhorší, 5 = nejlepší.</div>
                                     </div>
             
                                     <!-- Description -->
                                     <div class='mb-3'>
                                         <label for='reviewText' class='form-label fw-semibold'>📝 Popis</label>
                                         <textarea class='form-control' id='reviewText' name='{$actionType}_Description' 
-                                         rows='4' placeholder='Jak ti chutnalo? Co bys vyzdvihl?' required></textarea>
+                                         rows='4' placeholder='Jak ti chutnalo? Co bys vyzdvihl?' required>$descriptionVal</textarea>
                                     </div>
             
                                 </div>

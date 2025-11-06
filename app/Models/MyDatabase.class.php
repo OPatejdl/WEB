@@ -189,11 +189,11 @@ class MyDatabase
     /**
      * Function gets average rating of a product
      *
-     * @param int $idProduct id of a product
+     * @param int $productId id of a product
      * @return float|null average rating value of certain product
      */
-    public function getAvgRating(int $idProduct): float|null {
-        $productRating = $this->selectFromTable(TABLE_REVIEW, "fk_id_product = ".$idProduct);
+    public function getAvgRating(int $productId): float|null {
+        $productRating = $this->selectFromTable(TABLE_REVIEW, "fk_id_product = ".$productId);
         $totalRating = 0;
         foreach ($productRating as $rating) {
             $totalRating = $totalRating + $rating["rating"];
@@ -220,11 +220,11 @@ class MyDatabase
     /**
      * Function gets reviews of product
      *
-     * @param int $idProduct - product id
+     * @param int $productId - product id
      * @return array array of reviews
      */
-    private function getReviewsForProduct(int $idProduct): array {
-        $idProduct = htmlspecialchars($idProduct);
+    private function getReviewsForProduct(int $productId): array {
+        $productId = htmlspecialchars($productId);
 
         $q = "
         SELECT  r.id_review,
@@ -239,7 +239,7 @@ class MyDatabase
         ";
 
         $stmt = $this->pdo->prepare($q);
-        $stmt->bindValue(":productId", $idProduct);
+        $stmt->bindValue(":productId", $productId);
 
         if ($stmt->execute()) {
             return $stmt->fetchAll();
@@ -267,22 +267,23 @@ class MyDatabase
     /**
      *
      *
-     * @param int $idProduct
+     * @param int $productId
      * @param int $idUser
      * @return array
      */
-    private function getUserReviewsForProduct(int $idProduct, int $idUser): array {
+    private function getUserReviewsForProduct(int $productId, int $idUser): array {
         $idUser = htmlspecialchars($idUser);
 
         $q = "SELECT 
-                    r.rating, r.description, r.publicity
+                    r.id_review ,r.rating, r.description, r.publicity,
+                    r.fk_id_product
                 FROM ".TABLE_REVIEW." r 
                 WHERE fk_id_user = :idUser AND fk_id_product = :idProduct 
                 ORDER BY r.created_at ASC";
 
         $stmt = $this->pdo->prepare($q);
         $stmt->bindValue(":idUser", $idUser);
-        $stmt->bindValue(":idProduct", $idProduct);
+        $stmt->bindValue(":idProduct", $productId);
 
         if ($stmt->execute()) {
             return $stmt->fetchAll();
@@ -494,7 +495,7 @@ class MyDatabase
 
     public function addNewReview(string $id_user, string $id_product, string $rating, string $description, int $publicity = 1): bool {
         $idUser = htmlspecialchars($id_user);
-        $idProduct = htmlspecialchars($id_product);
+        $productId = htmlspecialchars($id_product);
         $rating = htmlspecialchars($rating);
         $description = htmlspecialchars($description);
         $publicity = htmlspecialchars($publicity);
@@ -504,7 +505,7 @@ class MyDatabase
 
         $stmt = $this->pdo->prepare($q);
         $stmt->bindValue(":id_user", $idUser);
-        $stmt->bindValue(":id_product", $idProduct);
+        $stmt->bindValue(":id_product", $productId);
         $stmt->bindValue(":rating", $rating);
         $stmt->bindValue(":description", $description);
         $stmt->bindValue(":publicity", $publicity);
@@ -542,13 +543,13 @@ class MyDatabase
      */
     public function checkIfReviewExists(string $id_user, string $id_product): bool {
         $idUser = htmlspecialchars($id_user);
-        $idProduct = htmlspecialchars($id_product);
+        $productId = htmlspecialchars($id_product);
 
         $q = "SELECT * FROM " . TABLE_REVIEW . " WHERE fk_id_product = :id_product AND fk_id_user = :id_user";
 
         $stmt = $this->pdo->prepare($q);
 
-        $stmt->bindValue(":id_product", $idProduct);
+        $stmt->bindValue(":id_product", $productId);
         $stmt->bindValue(":id_user", $idUser);
 
         $stmt->execute();
@@ -580,8 +581,8 @@ class MyDatabase
         return false;
     }
 
-    public function updateReviewPublicity(string $idReview, int $current): bool {
-        $idReview = htmlspecialchars($idReview);
+    public function updateReviewPublicity(string $reviewId, int $current): bool {
+        $reviewId = htmlspecialchars($reviewId);
 
         $q = "UPDATE " . TABLE_REVIEW . " SET publicity = :publicity WHERE id_review = :idReview";
 
@@ -592,7 +593,7 @@ class MyDatabase
             $stmt->bindValue(":publicity", 0);
         }
 
-        $stmt->bindValue(":idReview", $idReview);
+        $stmt->bindValue(":idReview", $reviewId);
 
         if ($stmt->execute()) {
             return true;
@@ -695,14 +696,14 @@ class MyDatabase
     /**
      * Function gets photo_url of product based on its productId
      *
-     * @param string $idProduct product Id
+     * @param string $productId product Id
      * @return array photo_url in array
      */
-    public function getProductPicById(string $idProduct): array {
-        $idProduct = htmlspecialchars($idProduct);
+    public function getProductPicById(string $productId): array {
+        $productId = htmlspecialchars($productId);
         $q = "SELECT photo_url FROM ".TABLE_PRODUCT." WHERE id_product = :idProduct";
         $stmt = $this->pdo->prepare($q);
-        $stmt->bindValue(":idProduct", $idProduct);
+        $stmt->bindValue(":idProduct", $productId);
         $stmt->execute();
         return $stmt->fetch();
     }
@@ -710,15 +711,15 @@ class MyDatabase
     /**
      * Function for product editing
      *
-     * @param string $idProduct product's id
+     * @param string $productId product's id
      * @param string $name product's name
      * @param string $picPath path to product's picture
      * @param string $price product's price
      * @param string $category product's category
      * @return bool true if successful otherwise false
      */
-    public function editProduct(string $idProduct, string $name, string $picPath, string $price, string $category): bool {
-        $idProduct = htmlspecialchars($idProduct);
+    public function editProduct(string $productId, string $name, string $picPath, string $price, string $category): bool {
+        $productId = htmlspecialchars($productId);
         $name = htmlspecialchars($name);
         $pic = htmlspecialchars($picPath);
         $price = htmlspecialchars($price);
@@ -737,7 +738,7 @@ class MyDatabase
         $stmt->bindValue(":name", $name);
         $stmt->bindValue(":price", $price);
         $stmt->bindValue(":photo", $pic);
-        $stmt->bindValue(":idProduct", $idProduct);
+        $stmt->bindValue(":idProduct", $productId);
 
 
         if ($stmt->execute()) {
@@ -746,5 +747,42 @@ class MyDatabase
         }
 
         return false;
+    }
+
+    ///////////////////////////////////////////
+    /// EDIT and DELETE Review
+
+    /**
+     * Function checks if review with reviewId exists
+     *
+     * @param string $reviewId review's id
+     * @return bool true if exists otherwise false
+     */
+    public function doesReviewExist(string $reviewId): bool {
+        $reviewId = htmlspecialchars($reviewId);
+
+        $q = "SELECT * FROM ".TABLE_REVIEW." WHERE id_review = :review";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":review", $reviewId);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
+    }
+
+    /**
+     * Function deletes review from DB
+     *
+     * @param string $reviewId review's id
+     * @return bool true if successful otherwise false
+     */
+    public function deleteReview(string $reviewId): bool {
+        $reviewId = htmlspecialchars($reviewId);
+
+        $q = "DELETE FROM ".TABLE_REVIEW." WHERE id_review = :review";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":review", $reviewId);
+        return $stmt->execute();
     }
 }
