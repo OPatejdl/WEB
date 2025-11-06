@@ -137,7 +137,7 @@ class ModalsDef
                             <!-- Add Review Form -->
                             <form action='' method='POST' class='p-2'>
                                 <input type='hidden' name='action' value='$actionType'>
-                                <input type='hidden' name='productId' value='$reviewId'>
+                                <input type='hidden' name='reviewId' value='$reviewId'>
                                 <div class='modal-body'>
                                     
                                     <!-- Product -->

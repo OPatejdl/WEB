@@ -785,4 +785,23 @@ class MyDatabase
         $stmt->bindValue(":review", $reviewId);
         return $stmt->execute();
     }
+
+    public function editReview(string $reviewId, string $description, string $rating): bool {
+        $reviewId = htmlspecialchars($reviewId);
+        $description = htmlspecialchars($description);
+        $rating = htmlspecialchars($rating);
+
+        $q = "UPDATE " . TABLE_REVIEW . "
+              SET
+                description = :description,
+                rating = :rating
+              WHERE id_review = :reviewId";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":description", $description);
+        $stmt->bindValue(":rating", $rating);
+        $stmt->bindValue(":reviewId", $reviewId);
+
+        return $stmt->execute();
+    }
 }

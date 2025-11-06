@@ -69,6 +69,27 @@ class LoginController implements IController
                     break;
 
                 case "editReview":
+                    if (isset($_POST["reviewId"]) && isset($_POST["editReview_Rating"])
+                        && isset($_POST["editReview_Description"])) {
+
+                        $newDes = $_POST["editReview_Description"];
+                        $newRating = $_POST["editReview_Rating"];
+                        $reviewId = $_POST["reviewId"];
+                        if ($newDes != "" && $newRating != "" && is_numeric($newRating)
+                            && $reviewId != "" && is_numeric($reviewId)) {
+                            $res = $this->db->editReview( $reviewId ,$newDes, $newRating);
+                            if ($res) {
+                                header('Location: ' . $_SERVER['REQUEST_URI']);
+                                exit();
+                            } else {
+                                echo "<script> console.log('Edit Review - Fail on DB') </script>";
+                            }
+                        } else {
+                            echo "<script> console.log('Edit Review - Some of the input is null') </script>";
+                        }
+                    } else {
+                        echo "<script> console.log('Edit Review - Undef ID') </script>";
+                    }
                     break;
             }
         }
