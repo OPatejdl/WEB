@@ -24,6 +24,9 @@ class RegisterController implements IController
         $tplData= [];
         $tplData["title"] = $pageTitle;
         $tplData["isLogged"] = $this->db->isUserLoggedIn();
+        if ($tplData["isLogged"]) {
+            $tplData["user"] = $this->db->getLoggedUserData();
+        }
         $tplData["error"] = "";
 
         $tplData["username"] = "";

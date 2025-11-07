@@ -47,7 +47,11 @@
                                 <ul class="navbar-nav mx-auto my-3 my-lg-0">
                                 <?php
                                     foreach(WEB_PAGES as $key => $page) {
-                                        if (!in_array($key, ['newReview', "newProduct", "register", "login"])) {
+                                        if (!in_array($key, ["register", "login", "adminPage"])) {
+                                            echo "<li class='nav-item'>
+                                                    <a class='nav-link px-3 fw-semibold fs-5' href='index.php?page=$key'>$page[title]</a>
+                                                    </li>";
+                                        } elseif (in_array($key, ["adminPage"]) && $tplData["isLogged"] && $tplData["user"]["priority"] >= WEB_PAGES[$key]["access_value"]) {
                                             echo "<li class='nav-item'>
                                                     <a class='nav-link px-3 fw-semibold fs-5' href='index.php?page=$key'>$page[title]</a>
                                                     </li>";

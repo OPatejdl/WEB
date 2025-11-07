@@ -71,11 +71,25 @@ class MyDatabase
     /// USER AND ROLES
     /**
      * Function gets all users from DB order by their username
+     * without super admin
      *
      * @return array array of all users
      */
-    public function getAllUsers(): array {
-        return $this->selectFromTable(TABLE_USER, "","username");
+    public function getAllUsersForAdmin(): array {
+        return $this->selectFromTable(TABLE_USER, "fk_id_role != 1","username");
+    }
+
+    public function getUsersReviewsCount(string $userId): int {
+        $userId = htmlspecialchars($userId);
+
+        $q = "SELECT COUNT(*) FROM ". TABLE_REVIEW ." WHERE fk_id_user = :userId";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":userId", $userId);
+
+        $stmt->execute();
+
+        return (int)$stmt->fetchColumn();
     }
 
     public function getAllRoles(): array {
@@ -265,7 +279,7 @@ class MyDatabase
     }
 
     /**
-     *
+     * Function gets user's reviews for certain product
      *
      * @param int $productId
      * @param int $idUser
