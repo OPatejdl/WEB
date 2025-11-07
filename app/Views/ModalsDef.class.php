@@ -216,7 +216,6 @@ class ModalsDef
                         </div>
                     </div>
                 </div>
-            </div>
             ";
 
         return $reviewModal;

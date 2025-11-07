@@ -19,9 +19,6 @@
     const ROLE_CONSUMER = "Consumer";
     const ROLE_MANAGER = "Manager";
     const ROLE_ADMIN = "Admin";
-
-    const SUPER_ADMIN_ID = 20;
-    const ROLE_ADMIN_ID = 2;
     const PRODUCT_PIC_DIR = "data/img/";
 
 /////// Websites Setup //////
