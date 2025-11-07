@@ -19,6 +19,9 @@ class HomepageController implements IController
         $tplData = [];
         $tplData["title"] = $pageTitle;
         $tplData["isLogged"] = $this->db->isUserLoggedIn();
+        if ($tplData["isLogged"]) {
+            $tplData["user"] = $this->db->getLoggedUserData();
+        }
 
         ob_start();
         require(DIRECTORY_VIEW . "/HomepageTemplate.php");

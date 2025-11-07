@@ -79,14 +79,14 @@
                 if ($tplData["isLogged"] && $tplData["user"]["priority"] >= $tplData["priorities"][ROLE_MANAGER]) {
                     $view .= "
                     <div class='d-flex gap-2 justify-content-end mt-auto'>
-                        <button type='button' class='btn btn-outline-warning' data-bs-toggle='modal' data-bs-target='#editProduct{$product["id_product"]}'>
+                        <button type='button' class='btn btn-outline-warning btn-sm' data-bs-toggle='modal' data-bs-target='#editProduct{$product["id_product"]}'>
                             <i class='bi bi-pencil-square me-1'></i> Upravit produkt
                         </button>
                         
                         <form action='' method='POST' class='m-0 p-0'>
                             <input type='hidden' name='action' value='deleteProduct'>
                             <input type='hidden' name='del_productId' value='{$product["id_product"]}'>
-                            <button type='submit' class='btn btn-outline-danger'>
+                            <button type='submit' class='btn btn-outline-danger btn-sm'>
                                 <i class='bi bi-x-circle me-1'></i> Smazat
                             </button>
                         </form>

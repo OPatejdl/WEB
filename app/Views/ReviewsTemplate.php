@@ -25,8 +25,11 @@
             <div class='col-auto'> 
                 <button type='button' class='btn btn-dark shadow-sm' data-bs-toggle='modal' data-bs-target='#newReview'>
                     <i class='bi bi-pencil-square me-1'></i> Napsat recenzi
-                </button>";
+                </button>
+            ";
             $btn_view .= $modalsDef->reviewModal("newReview", "newReview", "Nová recenze", "Přidat recenzi");
+            $btn_view .= "
+            </div>";
         }
         echo $btn_view;
     ?>
@@ -43,9 +46,11 @@
             // Review header - Product Name
             $review_card = "
             <section class='myBox-section card border-0 shadow-sm mb-5 w-100'>
+            
               <div class='card-header bg-light'>
                 <h2 class='mt-2 mb-2'>".$product["name"]."</h2>
               </div>
+              
               <div class='card-body p-0'>
                 <ul class='list-group list-group-flush'>
             ";
@@ -56,15 +61,15 @@
                     if ($review["publicity"] == 1) {
                         $stars = $tmplHeaders->setRatingStyle($review["rating"]);
                         $review_card .= "
-                        <li class='list-group-item'>
-                            <div class='d-flex flex-column'>
-                                <h5 class='mb-1'>" . $review["user_name"] . "</h5>
-                                <ul class='list-unstyled text-muted small mb-0'>
-                                  <li> <i>" . $review["description"] . "</i></li>
-                                  <li><strong>Hodnocení:</strong>" . $stars . "</li>
-                                </ul>
-                            </div>
-                        </li>
+                    <li class='list-group-item'>
+                        <div class='d-flex flex-column'>
+                            <h5 class='mb-1'>" . $review["user_name"] . "</h5>
+                            <ul class='list-unstyled text-muted small mb-0'>
+                                <li> <i>" . $review["description"] . "</i></li>
+                                <li><strong>Hodnocení:</strong>" . $stars . "</li>
+                            </ul>
+                        </div>
+                    </li>
                         ";
                         $public_count++;
                     }
@@ -72,27 +77,34 @@
                     $public_count++;
                     $stars = $tmplHeaders->setRatingStyle($review["rating"]);
                     $review_card .= "
-                        <li class='list-group-item'>
-                            <div class='col'>
+                    
+                    <li class='list-group-item'>
+                        <div class='d-flex justify-content-between align-items-end'>
+                        
+                            <div>
                                 <h5 class='mb-1'>" . $review["user_name"] . "</h5>
                                 <ul class='list-unstyled text-muted small mb-0'>
-                                  <li> <i>" . $review["description"] . "</i></li>
-                                  <li><strong>Hodnocení:</strong>" . $stars . "</li>
-                                </ul>";
+                                    <li> <i>" . $review["description"] . "</i></li>
+                                    <li><strong>Hodnocení:</strong>" . $stars . "</li>
+                                </ul>
+                            </div>";
 
+                    // Remove btn for admin
                     if ($tplData["user"]["priority"] >= $tplData["priorities"][ROLE_ADMIN]) {
                         $review_card .= "
-                            <div class='d-flex gap-2 justify-content-end '>
+                            
+                            <div class='d-flex justify-content-end align-items-end gap-2'>
                                 <form action='' method='POST' class='m-0 p-0'>
                                     <input type='hidden' name='action' value='deleteReview'>
                                     <input type='hidden' name='del_reviewId' value='{$review["id_review"]}'>
-                                    <button type='submit' class='btn btn-outline-danger'>
+                                    <button type='submit' class='btn btn-outline-danger btn-sm'>
                                         <i class='bi bi-x-circle me-1'></i> Odstranit
                                     </button>
                                 </form>
                             ";
                     }
 
+                    // Publicity btn
                     $review_card .= "
                                 <form action='' method='POST' >
                                     <input type='hidden' name='action' value='changePublicity'>
@@ -102,32 +114,30 @@
 
                     if ($review["publicity"] == 1) {
                         $review_card .= "
-                                    <button type='submit' class='btn btn-outline-primary'>
+                                    <button type='submit' class='btn btn-outline-primary btn-sm'>
                                         <i class='bi bi-eye me-1'></i> Skrýt
                                     </button>";
                     } else {
                         $review_card .= "
-                                    <button type='submit' class='btn btn-outline-success'>
+                                    <button type='submit' class='btn btn-outline-success btn-sm'>
                                         <i class='bi bi-eye me-1'></i> Zveřejnit
                                     </button>";
                     }
 
                     if ($tplData["user"]["priority"] >= $tplData["priorities"][ROLE_ADMIN]) {
                         $review_card .= "
-                                    </form>
-                                </div>
+                                </form>
                             </div>
-                        </li>
+                        </div>
+                    </li>
                     ";
                     } else {
                         $review_card .= "
                                 </form>
-                            </div>
-                        </li>
+                        </div>
+                    </li>
                     ";
                     }
-
-
                 }
             }
 
@@ -144,8 +154,6 @@
 
     echo $reviews_view;
 ?>
-
-
 
 <?php
     // FOOTER

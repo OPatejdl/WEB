@@ -31,6 +31,4 @@ class Common
             echo "<script> console.log('Delete Review - Undef ID') </script>";
         }
     }
-
-
 }

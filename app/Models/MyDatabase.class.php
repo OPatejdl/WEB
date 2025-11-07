@@ -71,11 +71,42 @@ class MyDatabase
     /// USER AND ROLES
     /**
      * Function gets all users from DB order by their username
+     * without super admin
      *
      * @return array array of all users
      */
-    public function getAllUsers(): array {
-        return $this->selectFromTable(TABLE_USER, "","username");
+    public function getAllUsersForAdmin(): array {
+        $q = "SELECT
+                r.priority,
+                u.id_user,
+                u.fk_id_role,
+                u.username,
+                u.email,
+                u.created_at
+              FROM " . TABLE_USER . " u
+              JOIN " . TABLE_ROLE . " r ON u.fk_id_role = r.id_role
+              WHERE u.fk_id_role != 1";
+
+        $obj = $this->execQuery($q);
+
+        if (!$obj) {
+            return [];
+        }
+
+        return $obj->fetchAll();
+    }
+
+    public function getUsersReviewsCount(string $userId): int {
+        $userId = htmlspecialchars($userId);
+
+        $q = "SELECT COUNT(*) FROM ". TABLE_REVIEW ." WHERE fk_id_user = :userId";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":userId", $userId);
+
+        $stmt->execute();
+
+        return (int)$stmt->fetchColumn();
     }
 
     public function getAllRoles(): array {
@@ -265,7 +296,7 @@ class MyDatabase
     }
 
     /**
-     *
+     * Function gets user's reviews for certain product
      *
      * @param int $productId
      * @param int $idUser
@@ -801,6 +832,66 @@ class MyDatabase
         $stmt->bindValue(":description", $description);
         $stmt->bindValue(":rating", $rating);
         $stmt->bindValue(":reviewId", $reviewId);
+
+        return $stmt->execute();
+    }
+
+    ///////////////////////////////////////////
+    /// ADMIN PAGE UTIL
+
+    /**
+     * Function gets array of pairs roleName->priority
+     *
+     * @return array array where key is role name and value is its priority
+     */
+    public function getRolesNameAndPriority(): array {
+        $output = [];
+        $q = "SELECT name, priority FROM " . TABLE_ROLE;
+
+        $obj = $this->execQuery($q);
+        foreach($obj as $role) {
+            $output[$role["name"]] = $role["priority"];
+        }
+
+        return $output;
+    }
+
+    /**
+     * Function deletes user form DB based on his id
+     *
+     * @param string $userId id of the user
+     * @return bool true if successful otherwise false
+     */
+    public function deleteUser(string $userId): bool {
+        $userId = htmlspecialchars($userId);
+
+        $q = "DELETE FROM " . TABLE_USER . " WHERE id_user = :userId";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":userId", $userId);
+
+        return $stmt->execute();
+    }
+
+    /**
+     * Function updates user's role
+     *
+     * @param string $userId id of the user
+     * @param string $roleId role of the user
+     * @return bool true if successful otherwise false
+     */
+    public function editRoleOfUser(string $userId, string $roleId): bool {
+        $userId = htmlspecialchars($userId);
+        $roleId = htmlspecialchars($roleId);
+
+        $q = "UPDATE " . TABLE_USER . "
+              SET 
+               fk_id_role = :roleId
+              WHERE id_user = :userId";
+
+        $stmt = $this->pdo->prepare($q);
+        $stmt->bindValue(":roleId", $roleId);
+        $stmt->bindValue(":userId", $userId);
 
         return $stmt->execute();
     }

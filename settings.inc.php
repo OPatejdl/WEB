@@ -87,14 +87,13 @@
             "access_value" => "0"
         ),
 
-        "newProduct" => array(
-            "title" => "Nový Produkt",
+        "adminPage" => array(
+            "title" => "Administrace",
 
-            // controller
-            "file_name" => "NewProductController.class.php",
-            "class_name" => "NewProductController",
-            // Role accessibility
-            "access_value" => "10"
+            "file_name" => "AdminPageController.class.php",
+            "class_name" => "AdminPageController",
+
+            "access_value" => "15"
         )
     );
 
