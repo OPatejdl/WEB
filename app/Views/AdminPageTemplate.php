@@ -39,14 +39,17 @@ $tmplHeaders->getHTMLHeader($tplData["title"]);
                 <!-- Each User -->";
        // User's rows
         foreach ($tplData["users"] as $user) {
+            if ($tplData["user"]["priority"] != SUPER_ADMIN_ID && $user["fk_id_role"] == ROLE_ADMIN_ID) {
+                continue;
+            }
             $view .= "
                 <tr class='text-center'>
                     <td>".$user["id_user"]."</td>
                     <td>".$user["username"]."</td>
                     <td>".$tplData[$user["username"]]["reviews_count"]."</td>
                     <td>".$user["created_at"]."</td>
-                    <td class='text-center'>
-                        <form method='post' class='d-flex align-items-center gap-2 mb-0'>
+                    <td>
+                        <form method='POST' class='d-flex align-items-center justify-content-center gap-2 mb-0'>
                             <input type='hidden' name='update_user_id' value='{$user['id_user']}'>
                             <select 
                                 name='new_role_id'
@@ -58,9 +61,9 @@ $tmplHeaders->getHTMLHeader($tplData["title"]);
                 }
 
                 if ($role["id_role"] == $user["fk_id_role"]) {
-                    $view .= "<option value='{$role["id_role"]}' selected>" . $role["name"] . "</option>>";
+                    $view .= "<option value='{$role["id_role"]}' selected>" . $role["name"] . "</option>";
                 } else {
-                    $view .= "<option value='{$role["id_role"]}'>" . $role["name"] . "</option>>";
+                    $view .= "<option value='{$role["id_role"]}'>" . $role["name"] . "</option>";
                 }
             }
 
@@ -68,7 +71,16 @@ $tmplHeaders->getHTMLHeader($tplData["title"]);
                             </select>
                             <button type='submit' class='btn btn-sm btn-outline-primary'>Update</button>
                         </form>
-                    <td/>
+                    </td>
+                    <td>
+                        <!-- DELETE USER FORM -->
+                        <form method='POST'>
+                            <input type='hidden' name='delete_user_id' value='{$user['id_user']}'>
+                                <button type='submit' class='btn btn-outline-danger btn-sm'>
+                                    Delete
+                                </button>
+                        </form>
+                    </td>
                 </tr>
                 ";
         }
