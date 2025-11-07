@@ -16,3 +16,10 @@
 .myBox-section .list-group-item:last-child{
     border-bottom:0
 }
+
+.list-group-item img {
+    height: 100px;
+    width: 160px;
+    object-fit: cover;
+    object-position: center;
+}

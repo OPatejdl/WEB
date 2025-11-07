@@ -27,10 +27,8 @@
                 <button type='button' class='btn btn-dark shadow-sm mb-5' data-bs-toggle='modal' data-bs-target='#newProduct'>
                     <i class='bi bi-pencil-square me-1'></i> Přidat produkt
                 </button>
-            
-                {$modalsDef->productModal("newProduct", "newProduct", "Nový Produkt", "Přidat", true)}
-                
             </div>
+                {$modalsDef->productModal("newProduct", "newProduct", "Nový Produkt", "Přidat", true)}
             ";
         }
 
@@ -70,7 +68,7 @@
                     >
                   </div>
 
-                  <div class='col'>
+                  <div class='col d-flex flex-column'>
                     <h5 class='mb-1'>".$product["name"]."</h5>
                     <ul class='list-unstyled text-muted small mb-0'>
                       <li><strong>Cena:</strong> ".$product["price"]." Kč</li>
@@ -78,7 +76,7 @@
                     </ul>";
                 if ($tplData["isLogged"] && $tplData["user"]["priority"] >= $tplData["priorities"][ROLE_MANAGER]) {
                     $view .= "
-                    <div class='d-flex gap-2 justify-content-end mt-auto'>
+                    <div class='mt-auto d-flex gap-2 justify-content-end align-items-end'>
                         <button type='button' class='btn btn-outline-warning btn-sm' data-bs-toggle='modal' data-bs-target='#editProduct{$product["id_product"]}'>
                             <i class='bi bi-pencil-square me-1'></i> Upravit produkt
                         </button>
@@ -90,17 +88,21 @@
                                 <i class='bi bi-x-circle me-1'></i> Smazat
                             </button>
                         </form>
-                        
-                        {$modalsDef->productModal("editProduct{$product['id_product']}", "editProduct", "Uprav Produkt", "Upravit", false,
+                    </div>
+                    </div>
+                    </div>
+                  </li>
+                    
+                    {$modalsDef->productModal("editProduct{$product['id_product']}", "editProduct", "Uprav Produkt", "Upravit", false,
                                                    $product["id_product"], $product["name"], $product["photo_url"], $product["price"], $product["fk_id_category"] )}
-                    </div>                
+                                    
                     ";
+                } else {
+                        $view .= "
+                      </div>
+                    </div>
+                  </li>";
                 }
-                $view .= "
-                  </div>
-                </div>
-              </li>
-          ";
             }
 
             // Ending

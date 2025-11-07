@@ -19,6 +19,7 @@
         <h1 class="mb-0"> Recenze </h1>
     </div>
     <?php
+        // create new review btn and modal
         $btn_view = "";
         if ($tplData["isLogged"] && $tplData["user"]["priority"] >= WEB_MODALS["newReview"]["access_value"]) {
             $btn_view = "
@@ -26,10 +27,10 @@
                 <button type='button' class='btn btn-dark shadow-sm' data-bs-toggle='modal' data-bs-target='#newReview'>
                     <i class='bi bi-pencil-square me-1'></i> Napsat recenzi
                 </button>
+            </div>
             ";
             $btn_view .= $modalsDef->reviewModal("newReview", "newReview", "Nová recenze", "Přidat recenzi");
-            $btn_view .= "
-            </div>";
+
         }
         echo $btn_view;
     ?>
