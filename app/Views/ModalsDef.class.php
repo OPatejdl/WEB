@@ -203,7 +203,9 @@ class ModalsDef
                     $reviewModal .= "<option value='$val'>$val</option>";
                 }
             }
+            $reviewModal .= "</select>";
         }
+
         $reviewModal .=    " <div class='form-text'>0 = nejhorší, 5 = nejlepší.</div>
                                     </div>
             
