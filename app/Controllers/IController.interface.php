@@ -12,5 +12,3 @@
          */
         public function show(string $pageTitle): string;
     }
-
-?>

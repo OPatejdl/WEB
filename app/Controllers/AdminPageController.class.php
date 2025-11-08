@@ -35,8 +35,10 @@ class AdminPageController implements IController
             $tplData[$user["username"]]["reviews_count"] = $this->db->getUsersReviewsCount($user["id_user"]);
         }
 
+        // Action handling
         if (isset($_POST["action"])) {
             switch ($_POST["action"]) {
+
                 case "deleteUser":
                     if (isset($_POST["delete_user_id"]) && is_numeric($_POST["delete_user_id"])) {
                         $res = $this->db->deleteUser($_POST["delete_user_id"]);
@@ -72,9 +74,9 @@ class AdminPageController implements IController
         }
 
         ob_start();
+
         require(DIRECTORY_VIEW . "/AdminPageTemplate.php");
 
-        // return template with data
         return ob_get_clean();
     }
 }

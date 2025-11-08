@@ -13,6 +13,7 @@
 ?>
 
 <?php
+    // Login form if user is not logged
     $view = "";
     if (!$tplData["isLogged"]){
         $view .= "
@@ -35,6 +36,7 @@
                         <h2 class='fw-bold text-center mb-4'>Přihlášení</h2>
         ";
 
+        // Info in case of error
         if ($tplData["error"] != "") {
             $view .= "
                     <div class='text-center text-danger fw-semibold mb-3'>
@@ -42,7 +44,7 @@
                     </div>
             ";
         }
-
+        // Login form
         $view .= "
                 <form method='POST' action=''>
                     <input type='hidden' name='action' value='login'>
@@ -71,12 +73,12 @@
     </div>
     ";
     } else {
-
+        // view for logged user
         $view .= "
         <div class='row py-5'>
             <div class='col-md-8 offset-md-2'>
 
-            <!-- Uživatelské informace -->
+            <!-- User's Information -->
             <div class='card mb-3 shadow-sm'>
                 <div class='card-body'>
                     <h3 class='card-title fw-bold'>Profil uživatele</h3>
@@ -92,6 +94,7 @@
             </div>
         </div>
         
+        <!-- User's reviews -->
         <hr class='my-4'>
         <h4 class='fw-bolder'>Moje recenze</h4>
         ";
@@ -110,6 +113,7 @@
                     <ul class='list-group list-group-flush'>
                 ";
 
+                // Reviews of products
                 foreach ($productReviews as $productReview) {
                     $stars = $tmplHeaders->setRatingStyle($productReview["rating"]);
                     $view .= "

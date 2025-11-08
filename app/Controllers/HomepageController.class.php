@@ -3,7 +3,7 @@ require_once(DIRECTORY_CONTROLLERS . "/IController.interface.php");
 class HomepageController implements IController
 {
     /** @var MyDatabase $db Var for database handling **/
-    private $db;
+    private MyDatabase $db;
 
     /**
      * Constructor for Homepage class
@@ -24,9 +24,9 @@ class HomepageController implements IController
         }
 
         ob_start();
+
         require(DIRECTORY_VIEW . "/HomepageTemplate.php");
 
-        // return template with data
         return ob_get_clean();
     }
 }

@@ -239,14 +239,6 @@ class MyDatabase
 
     ////////////////////////////////////////////////////////
     // REVIEW functions
-    /**
-     * Functions gets all reviews from DB
-     *
-     * @return array array of all reviews
-     */
-    public function getAllReviews(): array {
-        return $this->selectFromTable(TABLE_REVIEW, "", "created_at");
-    }
 
     /**
      * Function gets reviews of product
@@ -523,7 +515,16 @@ class MyDatabase
         return false;
     }
 
-
+    /**
+     * Function adds new review to DB
+     *
+     * @param string $id_user id of the user, who created review
+     * @param string $id_product product, which is reviewed
+     * @param string $rating rating of review
+     * @param string $description description fo review
+     * @param int $publicity publicity of review
+     * @return bool true if successful otherwise false
+     */
     public function addNewReview(string $id_user, string $id_product, string $rating, string $description, int $publicity = 1): bool {
         $idUser = htmlspecialchars($id_user);
         $productId = htmlspecialchars($id_product);
@@ -612,6 +613,13 @@ class MyDatabase
         return false;
     }
 
+    /**
+     * Function changes publicity of review with reviewId id
+     *
+     * @param string $reviewId review's id
+     * @param int $current value of current publicity
+     * @return bool true if successful otherwise false
+     */
     public function updateReviewPublicity(string $reviewId, int $current): bool {
         $reviewId = htmlspecialchars($reviewId);
 
@@ -655,6 +663,15 @@ class MyDatabase
         return $stmt->rowCount() > 0;
     }
 
+    /**
+     * Function adds new product to DB
+     *
+     * @param $name product's name
+     * @param $picPath product's picture
+     * @param $price product's price
+     * @param $category product's category
+     * @return bool true if successful otherwise false
+     */
     public function addNewProduct($name, $picPath, $price, $category): bool {
         $name = htmlspecialchars($name);
         $pic = htmlspecialchars($picPath);
@@ -817,6 +834,14 @@ class MyDatabase
         return $stmt->execute();
     }
 
+    /**
+     * Function for editing of review with $reviewId
+     *
+     * @param string $reviewId review's id
+     * @param string $description new description
+     * @param string $rating new rating
+     * @return bool true if successful otherwise false
+     */
     public function editReview(string $reviewId, string $description, string $rating): bool {
         $reviewId = htmlspecialchars($reviewId);
         $description = htmlspecialchars($description);

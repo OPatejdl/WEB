@@ -32,7 +32,7 @@ class RegisterController implements IController
         $tplData["username"] = "";
         $tplData["email"] = "";
 
-        // Handle registration
+        // Action handling
         if (isset($_POST["action"])){
             if ($_POST["action"] == "register" && isset($_POST["username"]) && isset($_POST["email"])
                 && isset($_POST["password"]) && isset($_POST["password_repeat"])){

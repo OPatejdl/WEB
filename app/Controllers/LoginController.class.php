@@ -34,9 +34,10 @@ class LoginController implements IController
         $tplData["error"] = "";
         $tplData["products"] = $this->db->getAllProducts();
 
-        // Login action
+        // Action handling
         if (isset($_POST["action"])) {
             switch ($_POST["action"]) {
+
                 case "login":
                     if (isset($_POST["username"]) && isset($_POST["password"])) {
                         if (password_verify($_POST["password"], $this->db->getHashedPassword($_POST["username"]))) {
@@ -85,6 +86,7 @@ class LoginController implements IController
             }
         }
 
+        // check if user is 
         $tplData["isLogged"] = $this->db->isUserLoggedIn();
         if ($tplData["isLogged"]) {
             $tplData["user"] = $this->db->getLoggedUserData();

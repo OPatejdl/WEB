@@ -29,7 +29,7 @@
                     <div class='card-body p-4 p-lg-5'>
                         <h2 class='fw-bold text-center mb-4'>Registrace</h2>
             ";
-
+    // show error message if register unsuccessful
     if ($tplData["error"] != "") {
         $view .= "
                         <div class='text-center text-danger fw-semibold mb-3'>

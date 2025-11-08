@@ -6,12 +6,17 @@ class Common
     private MyDatabase $db;
 
     /**
-     * Reviews class constructore
+     * Reviews class constructor
      */
     public function __construct(MyDatabase $value) {
         $this->db = $value;
     }
 
+    /**
+     * Function deletes a review from DB
+     *
+     * @return void
+     */
     public function deleteReview(): void {
         if (isset($_POST["del_reviewId"]) && is_numeric($_POST["del_reviewId"])) {
 

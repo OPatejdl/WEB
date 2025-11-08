@@ -13,6 +13,7 @@ class MenuController implements IController {
         $this->db = new MyDatabase();
 
     }
+
     public function show(string $pageTitle): string {
         global $tplData;
 
@@ -35,8 +36,10 @@ class MenuController implements IController {
                 $this->db->getAvgRating($product["id_product"]);
         }
 
+        // Action handling
         if (isset($_POST["action"])) {
             switch ($_POST["action"]) {
+                
                 case "newProduct":
                     if (isset($_POST["newProduct_name"]) && isset($_FILES["newProduct_pic"])
                     && isset($_POST["newProduct_price"]) && isset($_POST["newProduct_category"])) {

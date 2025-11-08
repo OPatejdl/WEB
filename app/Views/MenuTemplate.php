@@ -19,6 +19,7 @@
     </div>
 
     <?php
+        // Btn and modal for creating of new product (only managers and higher roles)
         $btn_view = "";
 
         if ($tplData["isLogged"] && $tplData["user"]["priority"] >= WEB_MODALS["newProduct"]["access_value"]) {
@@ -36,6 +37,8 @@
     ?>
 
     <?php
+
+    // Products with their information based on their category
     $view = "";
     foreach ($tplData["menu"] as $category) {
         if (count($category[1]) > 0) {
@@ -74,8 +77,11 @@
                       <li><strong>Cena:</strong> ".$product["price"]." Kč</li>
                       <li><strong>Hodnocení:</strong> ".$stars."</li>
                     </ul>";
-                if ($tplData["isLogged"] && $tplData["user"]["priority"] >= $tplData["priorities"][ROLE_MANAGER]) {
-                    $view .= "
+
+                // Btn for editing and deleting of product and modal for editing if user is at least manager
+                    if ($tplData["isLogged"] && $tplData["user"]["priority"] >= $tplData["priorities"][ROLE_MANAGER]) {
+
+                        $view .= "
                     <div class='mt-auto d-flex gap-2 justify-content-end align-items-end'>
                         <button type='button' class='btn btn-outline-warning btn-sm' data-bs-toggle='modal' data-bs-target='#editProduct{$product["id_product"]}'>
                             <i class='bi bi-pencil-square me-1'></i> Upravit produkt
@@ -89,9 +95,9 @@
                             </button>
                         </form>
                     </div>
-                    </div>
-                    </div>
-                  </li>
+                  </div>
+                </div>
+              </li>
                     
                     {$modalsDef->productModal("editProduct{$product['id_product']}", "editProduct", "Uprav Produkt", "Upravit", false,
                                                    $product["id_product"], $product["name"], $product["photo_url"], $product["price"], $product["fk_id_category"] )}
@@ -99,9 +105,9 @@
                     ";
                 } else {
                         $view .= "
-                      </div>
-                    </div>
-                  </li>";
+                  </div>
+                </div>
+              </li>";
                 }
             }
 

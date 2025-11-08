@@ -33,6 +33,7 @@ class ReviewsController implements IController
         $tplData["products"] = $this->db->getAllProducts();
         $tplData["priorities"] = $this->db->getAllPriorities();
 
+        // Action handling
         if (isset($_POST["action"])) {
 
             if ($_POST["action"] == "newReview" && isset($_POST["newReview_Product"])
@@ -92,6 +93,7 @@ class ReviewsController implements IController
                     echo "<script> console.log('Publicity of Review - Review does not exist') </script>";
                 }
             }
+
             elseif ($_POST["action"] == "deleteReview") {
                 $this->commonFunc->deleteReview();
             }
@@ -102,6 +104,7 @@ class ReviewsController implements IController
         }
 
         ob_start();
+        
         require(DIRECTORY_VIEW . "/ReviewsTemplate.php");
 
         return ob_get_clean();

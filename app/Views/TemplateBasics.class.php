@@ -51,7 +51,7 @@
                                             echo "<li class='nav-item'>
                                                     <a class='nav-link px-3 fw-semibold fs-5' href='index.php?page=$key'>$page[title]</a>
                                                     </li>";
-                                        } elseif (in_array($key, ["adminPage"]) && $tplData["isLogged"] && $tplData["user"]["priority"] >= WEB_PAGES[$key]["access_value"]) {
+                                        } elseif ($key == "adminPage" && $tplData["isLogged"] && $tplData["user"]["priority"] >= WEB_PAGES[$key]["access_value"]) {
                                             echo "<li class='nav-item'>
                                                     <a class='nav-link px-3 fw-semibold fs-5' href='index.php?page=$key'>$page[title]</a>
                                                     </li>";
@@ -160,11 +160,17 @@
             <?php
         }
 
+        /**
+         * Function sets graphical view of rating
+         *
+         * @param float $rating value of rating
+         * @return string rating template
+         */
         public function setRatingStyle(float $rating): string {
             $stars = "";
 
             if ($rating == null) {
-                $stars = "<span class='text-muted fst-italic'>Neohodnoceno</span>";;
+                $stars = "<span class='text-muted fst-italic'>Neohodnoceno</span>";
             } else {
                 $maxStars = 5;
                 for ($i = 1; $i <= $maxStars; $i++) {
